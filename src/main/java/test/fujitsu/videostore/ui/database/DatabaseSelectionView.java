@@ -4,6 +4,7 @@ import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -55,12 +56,18 @@ public class DatabaseSelectionView extends FlexLayout {
     }
 
     private void selectDatabase() {
+        String databasePathValue = databasePath.getValue();
         selectDatabaseButton.setEnabled(false);
         try {
-            // TODO: Make validations against selected database. If there will be an error, then show notification with
-            // using https://vaadin.com/api/platform/com/vaadin/flow/component/notification/Notification.html
+            if (!(databasePathValue.endsWith(".yaml") || databasePathValue.endsWith(".json"))){
+                Notification databaseFilePathNotification = new Notification(
+                                "Database file extension must be either .yaml or .json", 2000,
+                                Notification.Position.TOP_START);
+                databaseFilePathNotification.open();
+                return;
+            }
 
-            CurrentDatabase.set(databasePath.getValue());
+            CurrentDatabase.set(databasePathValue);
 
             getUI().get().navigate("");
         } finally {

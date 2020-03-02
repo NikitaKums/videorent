@@ -1,5 +1,7 @@
 package test.fujitsu.videostore.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Movie domain object
  */
@@ -62,6 +64,7 @@ public class Movie {
      *
      * @return boolean
      */
+    @JsonIgnore
     public boolean isNewObject() {
         return id == -1;
     }

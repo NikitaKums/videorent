@@ -1,5 +1,7 @@
 package test.fujitsu.videostore.backend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Customer domain object
  */
@@ -49,6 +51,7 @@ public class Customer {
      *
      * @return boolean
      */
+    @JsonIgnore
     public boolean isNewObject() {
         return id == -1;
     }
