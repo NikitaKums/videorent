@@ -22,8 +22,8 @@ public class CustomerListLogic {
 
         customerDBTableRepository = CurrentDatabase.get().getCustomerTable();
 
-        view.setNewCustomerEnabled(true);
-        view.setCustomers(customerDBTableRepository.getAll());
+        view.setNewEntityEnabled(true);
+        view.setEntities(customerDBTableRepository.getAll());
     }
 
     public void cancelCustomer() {
@@ -66,9 +66,9 @@ public class CustomerListLogic {
         Customer updatedObject = customerDBTableRepository.createOrUpdate(customer);
 
         if (isNew) {
-            view.addCustomer(updatedObject);
+            view.addEntity(updatedObject);
         } else {
-            view.updateCustomer(customer);
+            view.updateEntity(customer);
         }
 
         view.clearSelection();
@@ -80,7 +80,7 @@ public class CustomerListLogic {
         customerDBTableRepository.remove(customer);
 
         view.clearSelection();
-        view.removeCustomer(customer);
+        view.removeEntity(customer);
         setFragmentParameter("");
         view.showSaveNotification(customer.getName() + " removed");
     }
@@ -91,13 +91,13 @@ public class CustomerListLogic {
         } else {
             setFragmentParameter(customer.getId() + "");
         }
-        view.editCustomer(customer);
+        view.editEntity(customer);
     }
 
     public void newCustomer() {
         setFragmentParameter("new");
         view.clearSelection();
-        view.editCustomer(new Customer());
+        view.editEntity(new Customer());
     }
 
     public void rowSelected(Customer customer) {

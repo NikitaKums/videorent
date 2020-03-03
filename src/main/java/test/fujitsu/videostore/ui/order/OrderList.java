@@ -15,6 +15,9 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.ui.MainLayout;
+import test.fujitsu.videostore.ui.base.BaseTableDisplay;
+import test.fujitsu.videostore.ui.base.BaseTableDisplayImpl;
+import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.order.components.OrderForm;
 import test.fujitsu.videostore.ui.order.components.OrderGrid;
 
@@ -22,36 +25,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = OrderList.VIEW_NAME, layout = MainLayout.class)
-public class OrderList extends HorizontalLayout implements HasUrlParameter<String> {
+public class OrderList extends BaseTableDisplayImpl<RentOrder, OrderGrid> implements HasUrlParameter<String>{
 
     static final String VIEW_NAME = "OrderList";
     private OrderGrid grid;
     private OrderForm form;
     private TextField filter;
 
-    private ListDataProvider<RentOrder> dataProvider = new ListDataProvider<>(new ArrayList<>());
     private OrderListLogic viewLogic = new OrderListLogic(this);
     private Button newOrder;
 
     public OrderList() {
+        super(new ListDataProvider<>(new ArrayList<>()));
         setId(VIEW_NAME);
         setSizeFull();
+
         HorizontalLayout topLayout = createTopBar();
-
-        grid = new OrderGrid();
-        grid.setDataProvider(dataProvider);
-        grid.asSingleSelect().addValueChangeListener(
-                event -> viewLogic.rowSelected(event.getValue()));
-
+        initializeGrid();
         form = new OrderForm(viewLogic);
 
-        VerticalLayout barAndGridLayout = new VerticalLayout();
-        barAndGridLayout.add(topLayout);
-        barAndGridLayout.add(grid);
-        barAndGridLayout.setFlexGrow(1, grid);
-        barAndGridLayout.setFlexGrow(0, topLayout);
-        barAndGridLayout.setSizeFull();
-        barAndGridLayout.expand(grid);
+        VerticalLayout barAndGridLayout = Helper.CreateVerticalLayout(topLayout, grid);
 
         add(barAndGridLayout);
         add(form);
@@ -61,73 +54,49 @@ public class OrderList extends HorizontalLayout implements HasUrlParameter<Strin
         viewLogic.init();
     }
 
-    public HorizontalLayout createTopBar() {
-        filter = new TextField();
-        filter.setId("filter");
-        filter.setPlaceholder("Filter by ID or Customer name");
-        filter.setValueChangeMode(ValueChangeMode.EAGER);
+    private HorizontalLayout createTopBar() {
+        createFilterTextField();
+        createNewMovieButton();
+        return Helper.CreateHorizontalLayout(newOrder, filter);
+    }
+
+    private void initializeGrid(){
+        grid = new OrderGrid();
+        grid.asSingleSelect().addValueChangeListener(
+                event -> viewLogic.rowSelected(event.getValue()));
+        grid.setDataProvider(dataProvider);
+        gridType = grid;
+    }
+
+    private void createNewMovieButton(){
+        newOrder = Helper.CreateButtonWithText("New Order");
+        newOrder.addClickListener(click -> viewLogic.newOrder());
+        newEntityButton = newOrder;
+    }
+
+    private void createFilterTextField(){
+        filter = Helper.CreateTextFieldWithPlaceholder("Filter by ID or Customer name");
         filter.addValueChangeListener(event -> {
             //TODO: Implement filtering by id and customer name
         });
-
-        newOrder = new Button("New Order");
-        newOrder.setId("new-item");
-        newOrder.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        newOrder.setIcon(VaadinIcon.PLUS_CIRCLE.create());
-        newOrder.addClickListener(click -> viewLogic.newOrder());
-
-        HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("100%");
-        topLayout.add(filter);
-        topLayout.add(newOrder);
-        topLayout.setVerticalComponentAlignment(Alignment.START, filter);
-        topLayout.expand(filter);
-        return topLayout;
     }
 
-    public void showSaveNotification(String msg) {
-        Notification.show(msg);
+    @Override
+    public void editEntity(RentOrder entity) {
+        showForm(entity != null);
+        form.editOrder(entity);
     }
 
-    public void setNewOrderEnabled(boolean enabled) {
-        newOrder.setEnabled(enabled);
-    }
-
-    public void clearSelection() {
-        grid.getSelectionModel().deselectAll();
-    }
-
-    public void selectRow(RentOrder row) {
-        grid.getSelectionModel().select(row);
-    }
-
-    public void addOrder(RentOrder order) {
-        dataProvider.getItems().add(order);
-        grid.getDataProvider().refreshAll();
-    }
-
-    public void updateOrder(RentOrder order) {
-        dataProvider.refreshItem(order);
-    }
-
-    public void removeOrder(RentOrder order) {
-        dataProvider.getItems().remove(order);
-        grid.getDataProvider().refreshAll();
-    }
-
-    public void editOrder(RentOrder order) {
-        showForm(order != null);
-        form.editOrder(order);
-    }
-
+    @Override
     public void showForm(boolean show) {
         form.setVisible(show);
     }
 
-    public void setOrders(List<RentOrder> orders) {
+    @Override
+    public void setEntities(List<RentOrder> entities) {
         dataProvider.getItems().clear();
-        dataProvider.getItems().addAll(orders);
-        grid.getDataProvider().refreshAll();
+        dataProvider.getItems().addAll(entities);
+        dataProvider.refreshAll();
     }
 
     @Override

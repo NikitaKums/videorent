@@ -15,116 +15,82 @@ import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.ui.MainLayout;
+import test.fujitsu.videostore.ui.base.BaseTableDisplayImpl;
 import test.fujitsu.videostore.ui.customer.components.CustomerForm;
 import test.fujitsu.videostore.ui.customer.components.CustomerGrid;
+import test.fujitsu.videostore.ui.helpers.Helper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = CustomerList.VIEW_NAME, layout = MainLayout.class)
-public class CustomerList extends HorizontalLayout implements HasUrlParameter<String> {
+public class CustomerList extends BaseTableDisplayImpl<Customer, CustomerGrid> implements HasUrlParameter<String> {
 
     public static final String VIEW_NAME = "CustomerList";
     private CustomerGrid grid;
     private CustomerForm form;
     private TextField filter;
 
-    private ListDataProvider<Customer> dataProvider = new ListDataProvider<>(new ArrayList<>());
     private CustomerListLogic viewLogic = new CustomerListLogic(this);
     private Button newCustomer;
 
     public CustomerList() {
+        super(new ListDataProvider<>(new ArrayList<>()));
         setId(VIEW_NAME);
         setSizeFull();
+
         HorizontalLayout topLayout = createTopBar();
-
-        grid = new CustomerGrid();
-        grid.setDataProvider(dataProvider);
-        grid.asSingleSelect().addValueChangeListener(
-                event -> viewLogic.rowSelected(event.getValue()));
-
+        initializeGrid();
         form = new CustomerForm(viewLogic);
 
-        VerticalLayout barAndGridLayout = new VerticalLayout();
-        barAndGridLayout.add(topLayout);
-        barAndGridLayout.add(grid);
-        barAndGridLayout.setFlexGrow(1, grid);
-        barAndGridLayout.setFlexGrow(0, topLayout);
-        barAndGridLayout.setSizeFull();
-        barAndGridLayout.expand(grid);
-
-        add(barAndGridLayout);
+        add(Helper.CreateVerticalLayout(topLayout, grid));
         add(form);
 
         viewLogic.init();
     }
 
-    public HorizontalLayout createTopBar() {
-        filter = new TextField();
-        filter.setId("filter");
-        filter.setPlaceholder("Filter by customer name");
-        filter.setValueChangeMode(ValueChangeMode.EAGER);
+    private HorizontalLayout createTopBar() {
+        createFilterTextField();
+        createNewMovieButton();
+        return Helper.CreateHorizontalLayout(newCustomer, filter);
+    }
+
+    private void initializeGrid(){
+        grid = new CustomerGrid();
+        grid.asSingleSelect().addValueChangeListener(
+                event -> viewLogic.rowSelected(event.getValue()));
+        grid.setDataProvider(dataProvider);
+        gridType = grid;
+    }
+
+    private void createNewMovieButton(){
+        newCustomer = Helper.CreateButtonWithText("New Customer");
+        newCustomer.addClickListener(click -> viewLogic.newCustomer());
+        newEntityButton = newCustomer;
+    }
+
+    private void createFilterTextField(){
+        filter = Helper.CreateTextFieldWithPlaceholder("Filter by customer name");
         filter.addValueChangeListener(event -> {
             // TODO: Implement filtering by customer name
         });
-
-        newCustomer = new Button("New Customer");
-        newCustomer.setId("new-item");
-        newCustomer.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        newCustomer.setIcon(VaadinIcon.PLUS_CIRCLE.create());
-        newCustomer.addClickListener(click -> viewLogic.newCustomer());
-
-        HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("100%");
-        topLayout.add(filter);
-        topLayout.add(newCustomer);
-        topLayout.setVerticalComponentAlignment(Alignment.START, filter);
-        topLayout.expand(filter);
-        return topLayout;
     }
 
-    public void showSaveNotification(String msg) {
-        Notification.show(msg);
+    @Override
+    public void editEntity(Customer entity) {
+        showForm(entity != null);
+        form.editCustomer(entity);
     }
 
-    public void setNewCustomerEnabled(boolean enabled) {
-        newCustomer.setEnabled(enabled);
-    }
-
-    public void clearSelection() {
-        grid.getSelectionModel().deselectAll();
-    }
-
-    public void selectRow(Customer row) {
-        grid.getSelectionModel().select(row);
-    }
-
-    public void addCustomer(Customer customer) {
-        dataProvider.getItems().add(customer);
-        grid.getDataProvider().refreshAll();
-    }
-
-    public void updateCustomer(Customer customer) {
-        dataProvider.refreshItem(customer);
-    }
-
-    public void removeCustomer(Customer customer) {
-        dataProvider.getItems().remove(customer);
-        dataProvider.refreshAll();
-    }
-
-    public void editCustomer(Customer customer) {
-        showForm(customer != null);
-        form.editCustomer(customer);
-    }
-
+    @Override
     public void showForm(boolean show) {
         form.setVisible(show);
     }
 
-    public void setCustomers(List<Customer> customers) {
+    @Override
+    public void setEntities(List<Customer> entities) {
         dataProvider.getItems().clear();
-        dataProvider.getItems().addAll(customers);
+        dataProvider.getItems().addAll(entities);
         dataProvider.refreshAll();
     }
 

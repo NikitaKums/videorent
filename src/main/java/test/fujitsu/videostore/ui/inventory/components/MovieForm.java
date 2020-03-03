@@ -12,6 +12,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.backend.domain.MovieType;
+import test.fujitsu.videostore.ui.base.BaseForm;
 import test.fujitsu.videostore.ui.inventory.VideoStoreInventoryLogic;
 
 import java.text.DecimalFormat;
@@ -21,7 +22,7 @@ import java.util.Locale;
 /**
  * Movie form
  */
-public class MovieForm extends Div {
+public class MovieForm extends Div implements BaseForm<Movie> {
 
     private VerticalLayout content;
 

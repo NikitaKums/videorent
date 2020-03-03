@@ -21,8 +21,8 @@ public class VideoStoreInventoryLogic {
         }
         movieDBTableRepository = CurrentDatabase.get().getMovieTable();
 
-        view.setNewMovieEnabled(true);
-        view.setMovies(movieDBTableRepository.getAll());
+        view.setNewEntityEnabled(true);
+        view.setEntities(movieDBTableRepository.getAll());
     }
 
     public void cancelMovie() {
@@ -69,9 +69,9 @@ public class VideoStoreInventoryLogic {
         Movie updatedMovieObject = movieDBTableRepository.createOrUpdate(movie);
 
         if (isNew) {
-            view.addMovie(updatedMovieObject);
+            view.addEntity(updatedMovieObject);
         } else {
-            view.updateMovie(movie);
+            view.updateEntity(movie);
         }
 
         view.clearSelection();
@@ -83,7 +83,7 @@ public class VideoStoreInventoryLogic {
         movieDBTableRepository.remove(movie);
 
         view.clearSelection();
-        view.removeMovie(movie);
+        view.removeEntity(movie);
 
         setFragmentParameter("");
         view.showSaveNotification(movie.getName() + " removed");
@@ -100,11 +100,11 @@ public class VideoStoreInventoryLogic {
         } else {
             setFragmentParameter(movie.getId() + "");
         }
-        view.editMovie(movie);
+        view.editEntity(movie);
     }
 
     public void newMovie() {
-        view.editMovie(new Movie());
+        view.editEntity(new Movie());
         view.clearSelection();
         setFragmentParameter("new");
     }

@@ -16,118 +16,84 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.ui.MainLayout;
+import test.fujitsu.videostore.ui.base.BaseTableDisplayImpl;
+import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.inventory.components.MovieForm;
 import test.fujitsu.videostore.ui.inventory.components.MovieGrid;
+import test.fujitsu.videostore.ui.order.components.OrderGrid;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = VideoStoreInventory.VIEW_NAME, layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class VideoStoreInventory extends HorizontalLayout
-        implements HasUrlParameter<String> {
+public class VideoStoreInventory extends BaseTableDisplayImpl<Movie, MovieGrid> implements HasUrlParameter<String> {
 
     public static final String VIEW_NAME = "Inventory";
     private MovieGrid grid;
     private MovieForm form;
     private TextField filter;
 
-    private ListDataProvider<Movie> dataProvider = new ListDataProvider<>(new ArrayList<>());
     private VideoStoreInventoryLogic viewLogic = new VideoStoreInventoryLogic(this);
     private Button newMovie;
 
     public VideoStoreInventory() {
+        super(new ListDataProvider<>(new ArrayList<>()));
         setId(VIEW_NAME);
         setSizeFull();
+
         HorizontalLayout topLayout = createTopBar();
-
-        grid = new MovieGrid();
-        grid.asSingleSelect().addValueChangeListener(
-                event -> viewLogic.rowSelected(event.getValue()));
-        grid.setDataProvider(dataProvider);
-
+        initializeGrid();
         form = new MovieForm(viewLogic);
 
-        VerticalLayout barAndGridLayout = new VerticalLayout();
-        barAndGridLayout.add(topLayout);
-        barAndGridLayout.add(grid);
-        barAndGridLayout.setFlexGrow(1, grid);
-        barAndGridLayout.setFlexGrow(0, topLayout);
-        barAndGridLayout.setSizeFull();
-        barAndGridLayout.expand(grid);
-
-        add(barAndGridLayout);
+        add(Helper.CreateVerticalLayout(topLayout, grid));
         add(form);
 
         viewLogic.init();
     }
 
-    public HorizontalLayout createTopBar() {
-        filter = new TextField();
-        filter.setId("filter");
-        filter.setPlaceholder("Filter by name");
-        filter.setValueChangeMode(ValueChangeMode.EAGER);
+    private HorizontalLayout createTopBar() {
+        createFilterTextField();
+        createNewMovieButton();
+        return Helper.CreateHorizontalLayout(newMovie, filter);
+    }
+
+    private void initializeGrid(){
+        grid = new MovieGrid();
+        grid.asSingleSelect().addValueChangeListener(
+                event -> viewLogic.rowSelected(event.getValue()));
+        grid.setDataProvider(dataProvider);
+        gridType = grid;
+    }
+
+    private void createNewMovieButton(){
+        newMovie = Helper.CreateButtonWithText("New Movie");
+        newMovie.addClickListener(click -> viewLogic.newMovie());
+        newEntityButton = newMovie;
+    }
+
+    private void createFilterTextField(){
+        filter = Helper.CreateTextFieldWithPlaceholder("Filter by name");
         filter.addValueChangeListener(event -> {
             // TODO: Implement filtering by movie name
         });
-
-        newMovie = new Button("New Movie");
-        newMovie.setId("new-item");
-        newMovie.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        newMovie.setIcon(VaadinIcon.PLUS_CIRCLE.create());
-        newMovie.addClickListener(click -> viewLogic.newMovie());
-
-        HorizontalLayout topLayout = new HorizontalLayout();
-        topLayout.setWidth("100%");
-        topLayout.add(filter);
-        topLayout.add(newMovie);
-        topLayout.setVerticalComponentAlignment(Alignment.START, filter);
-        topLayout.expand(filter);
-        return topLayout;
     }
 
-    public void showSaveNotification(String msg) {
-        Notification.show(msg);
+    @Override
+    public void editEntity(Movie entity) {
+        showForm(entity != null);
+        form.editMovie(entity);
     }
 
-    public void setNewMovieEnabled(boolean enabled) {
-        newMovie.setEnabled(enabled);
-    }
-
-    public void clearSelection() {
-        grid.getSelectionModel().deselectAll();
-    }
-
-    public void selectRow(Movie row) {
-        grid.getSelectionModel().select(row);
-    }
-
-    public void addMovie(Movie movie) {
-        dataProvider.getItems().add(movie);
-        grid.getDataProvider().refreshAll();
-    }
-
-    public void updateMovie(Movie movie) {
-        dataProvider.refreshItem(movie);
-    }
-
-    public void removeMovie(Movie movie) {
-        dataProvider.getItems().remove(movie);
-        dataProvider.refreshAll();
-    }
-
-    public void editMovie(Movie movie) {
-        showForm(movie != null);
-        form.editMovie(movie);
-    }
-
+    @Override
     public void showForm(boolean show) {
         form.setVisible(show);
     }
 
-    public void setMovies(List<Movie> movies) {
+    @Override
+    public void setEntities(List<Movie> entities) {
         dataProvider.getItems().clear();
-        dataProvider.getItems().addAll(movies);
+        dataProvider.getItems().addAll(entities);
         dataProvider.refreshAll();
     }
 

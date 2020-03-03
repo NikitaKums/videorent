@@ -24,8 +24,8 @@ public class OrderListLogic {
         }
 
         repository = CurrentDatabase.get().getOrderTable();
-        view.setNewOrderEnabled(true);
-        view.setOrders(repository.getAll());
+        view.setNewEntityEnabled(true);
+        view.setEntities(repository.getAll());
     }
 
     public void cancelOrder() {
@@ -68,9 +68,9 @@ public class OrderListLogic {
         RentOrder updatedObject = repository.createOrUpdate(order);
 
         if (isNew) {
-            view.addOrder(updatedObject);
+            view.addEntity(updatedObject);
         } else {
-            view.updateOrder(order);
+            view.updateEntity(order);
         }
 
         view.clearSelection();
@@ -82,7 +82,7 @@ public class OrderListLogic {
         repository.remove(order);
 
         view.clearSelection();
-        view.removeOrder(order);
+        view.removeEntity(order);
         setFragmentParameter("");
         view.showSaveNotification(order.getId() + " removed");
     }
@@ -93,13 +93,13 @@ public class OrderListLogic {
         } else {
             setFragmentParameter(order.getId() + "");
         }
-        view.editOrder(order);
+        view.editEntity(order);
     }
 
     public void newOrder() {
         view.clearSelection();
         setFragmentParameter("new");
-        view.editOrder(new RentOrder());
+        view.editEntity(new RentOrder());
     }
 
     public void rowSelected(RentOrder order) {

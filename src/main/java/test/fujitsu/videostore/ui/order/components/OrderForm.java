@@ -12,10 +12,11 @@ import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.ValidationResult;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.backend.domain.RentOrder;
+import test.fujitsu.videostore.ui.base.BaseForm;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
 import test.fujitsu.videostore.ui.order.OrderListLogic;
 
-public class OrderForm extends Div {
+public class OrderForm extends Div implements BaseForm<RentOrder> {
 
     private VerticalLayout content;
 

@@ -9,12 +9,13 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import test.fujitsu.videostore.backend.domain.Customer;
+import test.fujitsu.videostore.ui.base.BaseForm;
 import test.fujitsu.videostore.ui.customer.CustomerListLogic;
 
 /**
  * Customer edit/creation form
  */
-public class CustomerForm extends Div {
+public class CustomerForm extends Div implements BaseForm<Customer> {
 
     private VerticalLayout content;
 
