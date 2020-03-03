@@ -5,6 +5,7 @@ import test.fujitsu.videostore.backend.domain.Movie;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Optional;
 
 public class MovieTableRepositoryImpl extends BaseRepositoryImpl<Movie> implements MovieTableRepository {
 
@@ -14,7 +15,8 @@ public class MovieTableRepositoryImpl extends BaseRepositoryImpl<Movie> implemen
 
     @Override
     public Movie findById(int id) {
-        return list.stream().filter(movie -> movie.getId() == id).findFirst().get();
+        Optional<Movie> movie = list.stream().filter(movie1 -> movie1.getId() == id).findFirst();
+        return movie.orElse(null);
     }
 
     @Override

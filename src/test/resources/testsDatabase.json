@@ -1,0 +1,42 @@
+{
+  "movie" : [ {
+    "id" : 2,
+    "name" : "Movie 2",
+    "stockCount" : 2,
+    "type" : 3
+  }, {
+    "id" : 3,
+    "name" : "Test movie",
+    "stockCount" : 1,
+    "type" : 1
+  } ],
+  "customer" : [ {
+    "id" : 2,
+    "name" : "Kristian Vehmas",
+    "points" : 0
+  }, {
+    "id" : 3,
+    "name" : "Irina Tamm",
+    "points" : 455
+  }, {
+    "id" : 5,
+    "name" : "Mikk Saar",
+    "points" : 25
+  }, {
+    "id" : 6,
+    "name" : "Test test",
+    "points" : 1
+  } ],
+  "order" : [ {
+    "id" : 1,
+    "customer" : 3,
+    "orderDate" : [ 2020, 3, 2 ],
+    "items" : [ {
+      "movie" : 2,
+      "type" : 3,
+      "days" : 19,
+      "paidByBonus" : false,
+      "returnedDay" : null
+    } ]
+  } ]
+}

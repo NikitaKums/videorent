@@ -5,6 +5,7 @@ import test.fujitsu.videostore.backend.domain.RentOrder;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Optional;
 
 public class RentOrderRepositoryImpl extends BaseRepositoryImpl<RentOrder> implements RentOrderRepository {
 
@@ -14,7 +15,8 @@ public class RentOrderRepositoryImpl extends BaseRepositoryImpl<RentOrder> imple
 
     @Override
     public RentOrder findById(int id) {
-        return list.stream().filter(rentOrder -> rentOrder.getId() == id).findFirst().get();
+        Optional<RentOrder> rentOrder = list.stream().filter(rentOrder1 -> rentOrder1.getId() == id).findFirst();
+        return rentOrder.orElse(null);
     }
 
     @Override

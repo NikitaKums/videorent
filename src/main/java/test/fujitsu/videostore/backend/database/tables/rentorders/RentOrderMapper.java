@@ -23,17 +23,20 @@ public class RentOrderMapper {
         rentOrder.setOrderDate(rentOrderDTO.getOrderDate());
 
         List<RentOrder.Item> items = new ArrayList<>();
-        for (RentOrderDTO.ItemDTO itemDTO : rentOrderDTO.getItems()) {
-            RentOrder.Item item = new RentOrder.Item();
-            item.setDays(itemDTO.getDays());
-            item.setMovieType(itemDTO.getType());
-            item.setPaidByBonus(itemDTO.isPaidByBonus());
-            item.setReturnedDay(itemDTO.getReturnedDay());
-            item.setMovie(movies.stream().filter(movie -> movie.getId() == itemDTO.getMovie()).findFirst().get());
-            items.add(item);
+        if (rentOrderDTO.getItems() != null){
+            for (RentOrderDTO.ItemDTO itemDTO : rentOrderDTO.getItems()) {
+                RentOrder.Item item = new RentOrder.Item();
+                item.setDays(itemDTO.getDays());
+                item.setMovieType(itemDTO.getType());
+                item.setPaidByBonus(itemDTO.isPaidByBonus());
+                item.setReturnedDay(itemDTO.getReturnedDay());
+                item.setMovie((movies.stream().filter(movie -> movie.getId() == itemDTO.getMovie()).findFirst()).orElse(null));
+                items.add(item);
+            }
         }
+
         rentOrder.setItems(items);
-        rentOrder.setCustomer(customers.stream().filter(customer -> customer.getId() == rentOrderDTO.getCustomer()).findFirst().get());
+        rentOrder.setCustomer((customers.stream().filter(customer -> customer.getId() == rentOrderDTO.getCustomer()).findFirst()).orElse(null));
 
         return rentOrder;
     }
@@ -46,14 +49,18 @@ public class RentOrderMapper {
         rentOrderDTO.setOrderDate(rentOrder.getOrderDate());
 
         List<RentOrderDTO.ItemDTO> itemsDTO = new ArrayList<>();
-        for (RentOrder.Item item : rentOrder.getItems()) {
-            RentOrderDTO.ItemDTO itemDTO = new RentOrderDTO.ItemDTO();
-            itemDTO.setDays(item.getDays());
-            itemDTO.setMovie(item.getMovie().getId());
-            itemDTO.setType(item.getMovieType());
-            itemDTO.setPaidByBonus(item.isPaidByBonus());
-            itemDTO.setReturnedDay(item.getReturnedDay());
-            itemsDTO.add(itemDTO);
+        if (rentOrder.getItems() != null){
+            for (RentOrder.Item item : rentOrder.getItems()) {
+                RentOrderDTO.ItemDTO itemDTO = new RentOrderDTO.ItemDTO();
+                itemDTO.setDays(item.getDays());
+                if (item.getMovie() != null){
+                    itemDTO.setMovie(item.getMovie().getId());
+                }
+                itemDTO.setType(item.getMovieType());
+                itemDTO.setPaidByBonus(item.isPaidByBonus());
+                itemDTO.setReturnedDay(item.getReturnedDay());
+                itemsDTO.add(itemDTO);
+            }
         }
 
         rentOrderDTO.setItems(itemsDTO);

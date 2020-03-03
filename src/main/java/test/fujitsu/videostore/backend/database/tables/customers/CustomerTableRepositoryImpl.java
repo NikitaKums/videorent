@@ -5,6 +5,7 @@ import test.fujitsu.videostore.backend.domain.Customer;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Optional;
 
 public class CustomerTableRepositoryImpl extends BaseRepositoryImpl<Customer> implements CustomerTableRepository {
 
@@ -14,7 +15,8 @@ public class CustomerTableRepositoryImpl extends BaseRepositoryImpl<Customer> im
 
     @Override
     public Customer findById(int id) {
-        return list.stream().filter(customer -> customer.getId() == id).findFirst().get();
+        Optional<Customer> customer = list.stream().filter(customer1 -> customer1.getId() == id).findFirst();
+        return customer.orElse(null);
     }
 
     @Override

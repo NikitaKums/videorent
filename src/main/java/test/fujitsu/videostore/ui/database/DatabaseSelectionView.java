@@ -12,6 +12,8 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import java.io.File;
+
 @Route("DatabaseSelection")
 @PageTitle("Database Selection")
 @HtmlImport("css/shared-styles.html")
@@ -60,10 +62,11 @@ public class DatabaseSelectionView extends FlexLayout {
         selectDatabaseButton.setEnabled(false);
         try {
             if (!(databasePathValue.endsWith(".yaml") || databasePathValue.endsWith(".json"))){
-                Notification databaseFilePathNotification = new Notification(
-                                "Database file extension must be either .yaml or .json", 2000,
-                                Notification.Position.TOP_START);
-                databaseFilePathNotification.open();
+                displayNotification("Database file extension must be either .yaml or .json");
+                return;
+            }
+            else if (!new File(databasePathValue).exists()){
+                displayNotification("Could not find file at relative path: " + databasePathValue);
                 return;
             }
 
@@ -73,5 +76,12 @@ public class DatabaseSelectionView extends FlexLayout {
         } finally {
             selectDatabaseButton.setEnabled(true);
         }
+    }
+
+    private void displayNotification(String message){
+        Notification databaseFilePathNotification = new Notification(
+                "Database file extension must be either .yaml or .json", 2000,
+                Notification.Position.TOP_START);
+        databaseFilePathNotification.open();
     }
 }
