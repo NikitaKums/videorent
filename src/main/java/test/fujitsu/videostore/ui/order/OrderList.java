@@ -1,9 +1,12 @@
 package test.fujitsu.videostore.ui.order;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
@@ -24,7 +27,6 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
     static final String VIEW_NAME = "OrderList";
 
     private OrderListLogic viewLogic = new OrderListLogic(this);
-    private Button newOrder;
 
     public OrderList() {
         super(new ListDataProvider<>(new ArrayList<>()));
@@ -47,8 +49,8 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
 
     private HorizontalLayout createTopBar() {
         createFilterTextField();
-        createNewMovieButton();
-        return Helper.CreateHorizontalLayout(newOrder, filter);
+        createNewOrderButton();
+        return Helper.CreateHorizontalLayout(newEntityButton, filter);
     }
 
     private void initializeGrid(){
@@ -58,14 +60,15 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
         grid.setDataProvider(dataProvider);
     }
 
-    private void createNewMovieButton(){
-        newOrder = Helper.CreateButtonWithText("New Order");
-        newOrder.addClickListener(click -> viewLogic.newEntity());
-        newEntityButton = newOrder;
+    private void createNewOrderButton(){
+        newEntityButton = Helper.CreateButtonWithText("new-item", "New Order");
+        newEntityButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newEntityButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
+        newEntityButton.addClickListener(click -> viewLogic.newEntity());
     }
 
     private void createFilterTextField(){
-        filter = Helper.CreateTextFieldWithPlaceholder("Filter by ID or Customer name");
+        filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by ID or Customer name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
             //TODO: Implement filtering by id and customer name
         });
@@ -74,7 +77,7 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
     @Override
     public void editEntity(RentOrder entity) {
         showForm(entity != null);
-        form.editOrder(entity);
+        form.editEntity(entity);
     }
 
     @Override

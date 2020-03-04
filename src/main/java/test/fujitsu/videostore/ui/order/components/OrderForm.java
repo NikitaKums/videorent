@@ -13,10 +13,12 @@ import com.vaadin.flow.data.binder.ValidationResult;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.ui.base.BaseForm;
+import test.fujitsu.videostore.ui.base.BaseFormImpl;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
+import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.order.OrderListLogic;
 
-public class OrderForm extends Div implements BaseForm<RentOrder> {
+public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implements BaseForm<RentOrder> {
 
     private VerticalLayout content;
 
@@ -24,61 +26,69 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
     private DatePicker orderDate;
     private OrderedVideos orderedVideos;
 
-    private Button save;
-    private Button cancel;
-    private Button delete;
     private Button returnButton;
 
-    private OrderListLogic viewLogic;
     private Binder<RentOrder> binder;
-    private RentOrder currentOrder;
 
     public OrderForm(OrderListLogic orderListLogic) {
+        super(new RentOrder(), orderListLogic);
         setId("edit-form");
         setSizeFull();
 
-        content = new VerticalLayout();
+        content = Helper.CreateVerticalLayout();
         content.setId("order-list-form-container");
         content.setSizeUndefined();
         content.setMargin(false);
 
         add(content);
 
-        viewLogic = orderListLogic;
-
-        customerComboBox = new ComboBox<>("Customer");
-        customerComboBox.setId("customer");
-        customerComboBox.setWidth("100%");
-        customerComboBox.setRequired(true);
+        customerComboBox = Helper.CreateComboBox("customer", "Customer", "100%", true);
         customerComboBox.setItems(CurrentDatabase.get().getCustomerTable().getAll());
         customerComboBox.setItemLabelGenerator(Customer::getName);
         content.add(customerComboBox);
 
-        orderDate = new DatePicker("Order date");
-        orderDate.setId("order-date");
-        orderDate.setWidth("100%");
-        orderDate.setReadOnly(true);
-        orderDate.setVisible(false);
+        orderDate = Helper.CreateDatePicker("order-date", "Order date", "100%", true, false);
         content.add(orderDate);
 
         orderedVideos = new OrderedVideos();
         content.add(orderedVideos);
 
-        binder = new Binder<>(RentOrder.class);
-        binder.forField(customerComboBox)
+        createSaveButton();
+        createCancelButton();
+        createDeleteButton();
+        returnButton = createReturnButton();
+
+        addListenerToSaveButton();
+        binder = createBinder();
+
+        content.add(save, returnButton, delete, cancel);
+    }
+
+    private Binder<RentOrder> createBinder(){
+        Binder<RentOrder> tempBinder = new Binder<>(RentOrder.class);
+        tempBinder.forField(customerComboBox)
                 .asRequired()
                 .bind("customer");
-        binder.forField(orderDate)
+        tempBinder.forField(orderDate)
                 .bind("orderDate");
-        binder.forField(orderedVideos)
+        tempBinder.forField(orderedVideos)
                 .withValidator(items -> items != null && items.size() > 0, "Add at least one movie")
                 .bind("items");
 
-        save = new Button();
-        save.setId("save");
-        save.setWidth("100%");
-        save.setDisableOnClick(false);
-        save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        return tempBinder;
+    }
+
+    private Button createReturnButton(){
+        Button button = Helper.CreateButtonWithTextAndWidth("return", "Return movies", "100%");
+        button.addClickListener(event -> {
+            ReturnMovieWindow returnMovieWindow = new ReturnMovieWindow(entity, viewLogic.getOrderToReceiptService(), viewLogic.getRepository(), () -> viewLogic.editEntity(entity));
+            returnMovieWindow.open();
+        });
+
+        return button;
+    }
+
+    private void addListenerToSaveButton(){
         save.addClickListener(event -> {
             BinderValidationStatus<RentOrder> validationStatus = binder.validate();
             if (validationStatus.hasErrors()) {
@@ -88,40 +98,13 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
             }
 
             // TODO: Validate that user have enough bonus points
-            binder.writeBeanIfValid(currentOrder);
-            new ReceiptWindow(viewLogic.getOrderToReceiptService().convertRentOrderToReceipt(currentOrder).print(), currentOrder.isNewObject(), () -> viewLogic.saveEntity(currentOrder));
+            binder.writeBeanIfValid(entity);
+            new ReceiptWindow(viewLogic.getOrderToReceiptService().convertRentOrderToReceipt(entity).print(), entity.isNewObject(), () -> viewLogic.saveEntity(entity));
         });
-
-        cancel = new Button("Cancel");
-        cancel.setId("cancel");
-        cancel.setWidth("100%");
-        cancel.addClickListener(event -> viewLogic.cancel());
-        getElement()
-                .addEventListener("keydown", event -> viewLogic.cancel())
-                .setFilter("event.key == 'Escape'");
-
-        delete = new Button("Delete");
-        delete.setId("delete");
-        delete.setWidth("100%");
-        delete.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
-        delete.addClickListener(event -> {
-            if (currentOrder != null) {
-                viewLogic.deleteEntity(currentOrder);
-            }
-        });
-
-        returnButton = new Button("Return movies");
-        returnButton.setId("return");
-        returnButton.setWidth("100%");
-        returnButton.addClickListener(event -> {
-            ReturnMovieWindow returnMovieWindow = new ReturnMovieWindow(currentOrder, orderListLogic.getOrderToReceiptService(), viewLogic.getRepository(), () -> viewLogic.editEntity(currentOrder));
-            returnMovieWindow.open();
-        });
-
-        content.add(save, returnButton, delete, cancel);
     }
 
-    public void editOrder(RentOrder order) {
+    @Override
+    public void editEntity(RentOrder order) {
         boolean isNew = order.isNewObject();
         if (isNew) {
             order = new RentOrder();
@@ -135,9 +118,9 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
         }
 
         setSaveButtonCaption(!isNew);
-        currentOrder = order;
+        entity = order;
         save.setEnabled(true);
-        binder.readBean(currentOrder);
+        binder.readBean(entity);
         binder.setReadOnly(!isNew);
         orderDate.setVisible(!isNew);
         orderDate.setReadOnly(true);
@@ -154,6 +137,6 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
     }
 
     public RentOrder getCurrentOrder() {
-        return currentOrder;
+        return entity;
     }
 }

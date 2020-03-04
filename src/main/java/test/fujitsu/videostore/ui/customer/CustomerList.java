@@ -1,8 +1,11 @@
 package test.fujitsu.videostore.ui.customer;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
@@ -23,7 +26,6 @@ public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, Custo
     public static final String VIEW_NAME = "CustomerList";
 
     private CustomerListLogic viewLogic = new CustomerListLogic(this);
-    private Button newCustomer;
 
     public CustomerList() {
         super(new ListDataProvider<>(new ArrayList<>()));
@@ -42,8 +44,8 @@ public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, Custo
 
     private HorizontalLayout createTopBar() {
         createFilterTextField();
-        createNewMovieButton();
-        return Helper.CreateHorizontalLayout(newCustomer, filter);
+        createNewCustomerButton();
+        return Helper.CreateHorizontalLayout(newEntityButton, filter);
     }
 
     private void initializeGrid(){
@@ -53,14 +55,15 @@ public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, Custo
         grid.setDataProvider(dataProvider);
     }
 
-    private void createNewMovieButton(){
-        newCustomer = Helper.CreateButtonWithText("New Customer");
-        newCustomer.addClickListener(click -> viewLogic.newEntity());
-        newEntityButton = newCustomer;
+    private void createNewCustomerButton(){
+        newEntityButton = Helper.CreateButtonWithText("new-item", "New Customer");
+        newEntityButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newEntityButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
+        newEntityButton.addClickListener(click -> viewLogic.newEntity());
     }
 
     private void createFilterTextField(){
-        filter = Helper.CreateTextFieldWithPlaceholder("Filter by customer name");
+        filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by customer name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
             // TODO: Implement filtering by customer name
         });
@@ -69,7 +72,7 @@ public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, Custo
     @Override
     public void editEntity(Customer entity) {
         showForm(entity != null);
-        form.editCustomer(entity);
+        form.editEntity(entity);
     }
 
     @Override

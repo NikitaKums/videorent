@@ -1,8 +1,11 @@
 package test.fujitsu.videostore.ui.inventory;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
@@ -44,7 +47,7 @@ public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, Movi
     private HorizontalLayout createTopBar() {
         createFilterTextField();
         createNewMovieButton();
-        return Helper.CreateHorizontalLayout(newMovie, filter);
+        return Helper.CreateHorizontalLayout(newEntityButton, filter);
     }
 
     private void initializeGrid(){
@@ -55,13 +58,14 @@ public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, Movi
     }
 
     private void createNewMovieButton(){
-        newMovie = Helper.CreateButtonWithText("New Movie");
-        newMovie.addClickListener(click -> viewLogic.newEntity());
-        newEntityButton = newMovie;
+        newEntityButton = Helper.CreateButtonWithText("new-item", "New Movie");
+        newEntityButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        newEntityButton.setIcon(VaadinIcon.PLUS_CIRCLE.create());
+        newEntityButton.addClickListener(click -> viewLogic.newEntity());
     }
 
     private void createFilterTextField(){
-        filter = Helper.CreateTextFieldWithPlaceholder("Filter by name");
+        filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
             // TODO: Implement filtering by movie name
         });
@@ -70,7 +74,7 @@ public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, Movi
     @Override
     public void editEntity(Movie entity) {
         showForm(entity != null);
-        form.editMovie(entity);
+        form.editEntity(entity);
     }
 
     @Override
