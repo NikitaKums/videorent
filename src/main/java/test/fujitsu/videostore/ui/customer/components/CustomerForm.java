@@ -76,16 +76,16 @@ public class CustomerForm extends Div implements BaseForm<Customer> {
                 // TODO: Validation that customer with same name is not present already in database.
 
                 binder.writeBeanIfValid(currentCustomer);
-                viewLogic.saveCustomer(currentCustomer);
+                viewLogic.saveEntity(currentCustomer);
             }
         });
 
         cancel = new Button("Cancel");
         cancel.setWidth("100%");
         cancel.setId("cancel");
-        cancel.addClickListener(event -> viewLogic.cancelCustomer());
+        cancel.addClickListener(event -> viewLogic.cancel());
         getElement()
-                .addEventListener("keydown", event -> viewLogic.cancelCustomer())
+                .addEventListener("keydown", event -> viewLogic.cancel())
                 .setFilter("event.key == 'Escape'");
 
         delete = new Button("Delete");
@@ -94,7 +94,7 @@ public class CustomerForm extends Div implements BaseForm<Customer> {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         delete.addClickListener(event -> {
             if (currentCustomer != null) {
-                viewLogic.deleteCustomer(currentCustomer);
+                viewLogic.deleteEntity(currentCustomer);
             }
         });
 

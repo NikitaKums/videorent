@@ -4,18 +4,19 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
 
-import java.util.ArrayList;
+public abstract class BaseListViewImpl<DomainType, GridType extends Grid<DomainType>, FormType extends BaseForm<DomainType>> extends HorizontalLayout
+        implements BaseListView<DomainType> {
 
-public abstract class BaseTableDisplayImpl<DomainType, GridType extends Grid<DomainType>> extends HorizontalLayout
-        implements BaseTableDisplay<DomainType> {
-
-    protected GridType gridType;
+    protected GridType grid;
+    protected FormType form;
+    protected TextField filter;
     protected ListDataProvider<DomainType> dataProvider;
     protected Button newEntityButton;
 
-    public BaseTableDisplayImpl(ListDataProvider<DomainType> dataProvider){
+    public BaseListViewImpl(ListDataProvider<DomainType> dataProvider){
         this.dataProvider = dataProvider;
     }
 
@@ -28,16 +29,16 @@ public abstract class BaseTableDisplayImpl<DomainType, GridType extends Grid<Dom
     }
 
     public void clearSelection() {
-        gridType.getSelectionModel().deselectAll();
+        grid.getSelectionModel().deselectAll();
     }
 
     public void selectRow(DomainType row) {
-        gridType.getSelectionModel().select(row);
+        grid.getSelectionModel().select(row);
     }
 
     public void addEntity(DomainType entity) {
         dataProvider.getItems().add(entity);
-        gridType.getDataProvider().refreshAll();
+        grid.getDataProvider().refreshAll();
     }
 
     public void updateEntity(DomainType entity) {

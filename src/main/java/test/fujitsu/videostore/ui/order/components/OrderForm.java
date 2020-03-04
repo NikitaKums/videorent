@@ -89,15 +89,15 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
 
             // TODO: Validate that user have enough bonus points
             binder.writeBeanIfValid(currentOrder);
-            new ReceiptWindow(viewLogic.getOrderToReceiptService().convertRentOrderToReceipt(currentOrder).print(), currentOrder.isNewObject(), () -> viewLogic.saveOrder(currentOrder));
+            new ReceiptWindow(viewLogic.getOrderToReceiptService().convertRentOrderToReceipt(currentOrder).print(), currentOrder.isNewObject(), () -> viewLogic.saveEntity(currentOrder));
         });
 
         cancel = new Button("Cancel");
         cancel.setId("cancel");
         cancel.setWidth("100%");
-        cancel.addClickListener(event -> viewLogic.cancelOrder());
+        cancel.addClickListener(event -> viewLogic.cancel());
         getElement()
-                .addEventListener("keydown", event -> viewLogic.cancelOrder())
+                .addEventListener("keydown", event -> viewLogic.cancel())
                 .setFilter("event.key == 'Escape'");
 
         delete = new Button("Delete");
@@ -106,7 +106,7 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         delete.addClickListener(event -> {
             if (currentOrder != null) {
-                viewLogic.deleteOrder(currentOrder);
+                viewLogic.deleteEntity(currentOrder);
             }
         });
 
@@ -114,7 +114,7 @@ public class OrderForm extends Div implements BaseForm<RentOrder> {
         returnButton.setId("return");
         returnButton.setWidth("100%");
         returnButton.addClickListener(event -> {
-            ReturnMovieWindow returnMovieWindow = new ReturnMovieWindow(currentOrder, orderListLogic.getOrderToReceiptService(), viewLogic.getRepository(), () -> viewLogic.editOrder(currentOrder));
+            ReturnMovieWindow returnMovieWindow = new ReturnMovieWindow(currentOrder, orderListLogic.getOrderToReceiptService(), viewLogic.getRepository(), () -> viewLogic.editEntity(currentOrder));
             returnMovieWindow.open();
         });
 

@@ -2,7 +2,7 @@ package test.fujitsu.videostore.ui.base;
 
 import java.util.List;
 
-public interface BaseTableDisplay<DomainType> {
+public interface BaseListView<DomainType> {
 
     void showSaveNotification(String msg);
 

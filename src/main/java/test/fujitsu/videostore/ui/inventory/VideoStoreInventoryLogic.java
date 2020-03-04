@@ -3,34 +3,28 @@ package test.fujitsu.videostore.ui.inventory;
 import com.vaadin.flow.component.UI;
 import test.fujitsu.videostore.backend.database.DBTableRepository;
 import test.fujitsu.videostore.backend.domain.Movie;
+import test.fujitsu.videostore.ui.base.BaseListLogicImpl;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
 
-public class VideoStoreInventoryLogic {
-
-    private VideoStoreInventory view;
-
-    private DBTableRepository<Movie> movieDBTableRepository;
+public class VideoStoreInventoryLogic extends BaseListLogicImpl<Movie, VideoStoreInventory> {
 
     public VideoStoreInventoryLogic(VideoStoreInventory videoStoreInventory) {
-        view = videoStoreInventory;
+        super(videoStoreInventory);
     }
 
+    @Override
     public void init() {
         if (CurrentDatabase.get() == null) {
             return;
         }
-        movieDBTableRepository = CurrentDatabase.get().getMovieTable();
+        dBTableRepository = CurrentDatabase.get().getMovieTable();
 
         view.setNewEntityEnabled(true);
-        view.setEntities(movieDBTableRepository.getAll());
+        view.setEntities(dBTableRepository.getAll());
     }
 
-    public void cancelMovie() {
-        setFragmentParameter("");
-        view.clearSelection();
-    }
-
-    private void setFragmentParameter(String movieId) {
+    @Override
+    public void setFragmentParameter(String movieId) {
         String fragmentParameter;
         if (movieId == null || movieId.isEmpty()) {
             fragmentParameter = "";
@@ -41,32 +35,11 @@ public class VideoStoreInventoryLogic {
         UI.getCurrent().navigate(VideoStoreInventory.class, fragmentParameter);
     }
 
-    public void enter(String movieId) {
-        if (movieId != null && !movieId.isEmpty()) {
-            if (movieId.equals("new")) {
-                newMovie();
-            } else {
-                try {
-                    int pid = Integer.parseInt(movieId);
-                    Movie movie = findMovie(pid);
-                    view.selectRow(movie);
-                } catch (NumberFormatException ex) {
-                    // Ignored
-                }
-            }
-        } else {
-            view.showForm(false);
-        }
-    }
-
-    private Movie findMovie(int movieId) {
-        return movieDBTableRepository.findById(movieId);
-    }
-
-    public void saveMovie(Movie movie) {
+    @Override
+    public void saveEntity(Movie movie) {
         boolean isNew = movie.isNewObject();
 
-        Movie updatedMovieObject = movieDBTableRepository.createOrUpdate(movie);
+        Movie updatedMovieObject = dBTableRepository.createOrUpdate(movie);
 
         if (isNew) {
             view.addEntity(updatedMovieObject);
@@ -79,8 +52,9 @@ public class VideoStoreInventoryLogic {
         view.showSaveNotification(movie.getName() + (isNew ? " created" : " updated"));
     }
 
-    public void deleteMovie(Movie movie) {
-        movieDBTableRepository.remove(movie);
+    @Override
+    public void deleteEntity(Movie movie) {
+        dBTableRepository.remove(movie);
 
         view.clearSelection();
         view.removeEntity(movie);
@@ -94,7 +68,8 @@ public class VideoStoreInventoryLogic {
      *
      * @param movie Movie object
      */
-    public void editMovie(Movie movie) {
+    @Override
+    public void editEntity(Movie movie) {
         if (movie == null) {
             setFragmentParameter("");
         } else {
@@ -103,13 +78,10 @@ public class VideoStoreInventoryLogic {
         view.editEntity(movie);
     }
 
-    public void newMovie() {
+    @Override
+    public void newEntity() {
         view.editEntity(new Movie());
         view.clearSelection();
         setFragmentParameter("new");
-    }
-
-    public void rowSelected(Movie movie) {
-        editMovie(movie);
     }
 }

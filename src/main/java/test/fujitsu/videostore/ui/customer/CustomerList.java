@@ -1,21 +1,15 @@
 package test.fujitsu.videostore.ui.customer;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.ui.MainLayout;
-import test.fujitsu.videostore.ui.base.BaseTableDisplayImpl;
+import test.fujitsu.videostore.ui.base.BaseListViewImpl;
 import test.fujitsu.videostore.ui.customer.components.CustomerForm;
 import test.fujitsu.videostore.ui.customer.components.CustomerGrid;
 import test.fujitsu.videostore.ui.helpers.Helper;
@@ -24,12 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = CustomerList.VIEW_NAME, layout = MainLayout.class)
-public class CustomerList extends BaseTableDisplayImpl<Customer, CustomerGrid> implements HasUrlParameter<String> {
+public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, CustomerForm> implements HasUrlParameter<String> {
 
     public static final String VIEW_NAME = "CustomerList";
-    private CustomerGrid grid;
-    private CustomerForm form;
-    private TextField filter;
 
     private CustomerListLogic viewLogic = new CustomerListLogic(this);
     private Button newCustomer;
@@ -60,12 +51,11 @@ public class CustomerList extends BaseTableDisplayImpl<Customer, CustomerGrid> i
         grid.asSingleSelect().addValueChangeListener(
                 event -> viewLogic.rowSelected(event.getValue()));
         grid.setDataProvider(dataProvider);
-        gridType = grid;
     }
 
     private void createNewMovieButton(){
         newCustomer = Helper.CreateButtonWithText("New Customer");
-        newCustomer.addClickListener(click -> viewLogic.newCustomer());
+        newCustomer.addClickListener(click -> viewLogic.newEntity());
         newEntityButton = newCustomer;
     }
 

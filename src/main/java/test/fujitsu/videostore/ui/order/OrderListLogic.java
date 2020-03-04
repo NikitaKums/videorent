@@ -4,36 +4,31 @@ import com.vaadin.flow.component.UI;
 import test.fujitsu.videostore.backend.database.DBTableRepository;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.backend.reciept.OrderToReceiptService;
+import test.fujitsu.videostore.ui.base.BaseListLogicImpl;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
 
-public class OrderListLogic {
+public class OrderListLogic extends BaseListLogicImpl<RentOrder, OrderList> {
 
-    private OrderList view;
-    private DBTableRepository<RentOrder> repository;
     private OrderToReceiptService orderToReceiptService;
 
     public OrderListLogic(OrderList orderList) {
-        view = orderList;
-
+        super(orderList);
         orderToReceiptService = new OrderToReceiptService();
     }
 
+    @Override
     public void init() {
         if (CurrentDatabase.get() == null) {
             return;
         }
 
-        repository = CurrentDatabase.get().getOrderTable();
+        dBTableRepository = CurrentDatabase.get().getOrderTable();
         view.setNewEntityEnabled(true);
-        view.setEntities(repository.getAll());
+        view.setEntities(dBTableRepository.getAll());
     }
 
-    public void cancelOrder() {
-        setFragmentParameter("");
-        view.clearSelection();
-    }
-
-    private void setFragmentParameter(String movieId) {
+    @Override
+    public void setFragmentParameter(String movieId) {
         String fragmentParameter;
         if (movieId == null || movieId.isEmpty()) {
             fragmentParameter = "";
@@ -44,28 +39,11 @@ public class OrderListLogic {
         UI.getCurrent().navigate(OrderList.class, fragmentParameter);
     }
 
-    public void enter(String orderId) {
-        if (orderId != null && !orderId.isEmpty()) {
-            if (orderId.equals("new")) {
-                newOrder();
-            } else {
-                int pid = Integer.parseInt(orderId);
-                RentOrder order = findOrder(pid);
-                view.selectRow(order);
-            }
-        } else {
-            view.showForm(false);
-        }
-    }
-
-    private RentOrder findOrder(int orderId) {
-        return repository.findById(orderId);
-    }
-
-    public void saveOrder(RentOrder order) {
+    @Override
+    public void saveEntity(RentOrder order) {
         boolean isNew = order.isNewObject();
 
-        RentOrder updatedObject = repository.createOrUpdate(order);
+        RentOrder updatedObject = dBTableRepository.createOrUpdate(order);
 
         if (isNew) {
             view.addEntity(updatedObject);
@@ -78,8 +56,9 @@ public class OrderListLogic {
         view.showSaveNotification(order.getId() + (isNew ? " created" : " updated"));
     }
 
-    public void deleteOrder(RentOrder order) {
-        repository.remove(order);
+    @Override
+    public void deleteEntity(RentOrder order) {
+        dBTableRepository.remove(order);
 
         view.clearSelection();
         view.removeEntity(order);
@@ -87,7 +66,8 @@ public class OrderListLogic {
         view.showSaveNotification(order.getId() + " removed");
     }
 
-    public void editOrder(RentOrder order) {
+    @Override
+    public void editEntity(RentOrder order) {
         if (order == null) {
             setFragmentParameter("");
         } else {
@@ -96,24 +76,19 @@ public class OrderListLogic {
         view.editEntity(order);
     }
 
-    public void newOrder() {
+    @Override
+    public void newEntity() {
         view.clearSelection();
         setFragmentParameter("new");
         view.editEntity(new RentOrder());
     }
 
-    public void rowSelected(RentOrder order) {
-        if (order == null) {
-            return;
-        }
-        editOrder(order);
-    }
 
     public OrderToReceiptService getOrderToReceiptService() {
         return orderToReceiptService;
     }
 
     public DBTableRepository<RentOrder> getRepository() {
-        return repository;
+        return dBTableRepository;
     }
 }

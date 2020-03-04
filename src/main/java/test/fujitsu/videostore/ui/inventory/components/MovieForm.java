@@ -93,16 +93,16 @@ public class MovieForm extends Div implements BaseForm<Movie> {
             if (currentMovie != null) {
                 // TODO: Validation for movie name, validate that movie type is selected
                 binder.writeBeanIfValid(currentMovie);
-                viewLogic.saveMovie(currentMovie);
+                viewLogic.saveEntity(currentMovie);
             }
         });
 
         cancel = new Button("Cancel");
         cancel.setId("cancel");
         cancel.setWidth("100%");
-        cancel.addClickListener(event -> viewLogic.cancelMovie());
+        cancel.addClickListener(event -> viewLogic.cancel());
         getElement()
-                .addEventListener("keydown", event -> viewLogic.cancelMovie())
+                .addEventListener("keydown", event -> viewLogic.cancel())
                 .setFilter("event.key == 'Escape'");
 
         delete = new Button("Delete");
@@ -111,7 +111,7 @@ public class MovieForm extends Div implements BaseForm<Movie> {
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR, ButtonVariant.LUMO_PRIMARY);
         delete.addClickListener(event -> {
             if (currentMovie != null) {
-                viewLogic.deleteMovie(currentMovie);
+                viewLogic.deleteEntity(currentMovie);
             }
         });
 

@@ -3,35 +3,29 @@ package test.fujitsu.videostore.ui.customer;
 import com.vaadin.flow.component.UI;
 import test.fujitsu.videostore.backend.database.DBTableRepository;
 import test.fujitsu.videostore.backend.domain.Customer;
+import test.fujitsu.videostore.ui.base.BaseListLogicImpl;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
 
-public class CustomerListLogic {
-
-    private CustomerList view;
-
-    private DBTableRepository<Customer> customerDBTableRepository;
+public class CustomerListLogic extends BaseListLogicImpl<Customer, CustomerList> {
 
     public CustomerListLogic(CustomerList customerList) {
-        view = customerList;
+        super(customerList);
     }
 
+    @Override
     public void init() {
         if (CurrentDatabase.get() == null) {
             return;
         }
 
-        customerDBTableRepository = CurrentDatabase.get().getCustomerTable();
+        dBTableRepository = CurrentDatabase.get().getCustomerTable();
 
         view.setNewEntityEnabled(true);
-        view.setEntities(customerDBTableRepository.getAll());
+        view.setEntities(dBTableRepository.getAll());
     }
 
-    public void cancelCustomer() {
-        setFragmentParameter("");
-        view.clearSelection();
-    }
-
-    private void setFragmentParameter(String movieId) {
+    @Override
+    public void setFragmentParameter(String movieId) {
         String fragmentParameter;
         if (movieId == null || movieId.isEmpty()) {
             fragmentParameter = "";
@@ -42,28 +36,11 @@ public class CustomerListLogic {
         UI.getCurrent().navigate(CustomerList.class, fragmentParameter);
     }
 
-    public void enter(String customerId) {
-        if (customerId != null && !customerId.isEmpty()) {
-            if (customerId.equals("new")) {
-                newCustomer();
-            } else {
-                int pid = Integer.parseInt(customerId);
-                Customer customer = findCustomer(pid);
-                view.selectRow(customer);
-            }
-        } else {
-            view.showForm(false);
-        }
-    }
-
-    private Customer findCustomer(int customerId) {
-        return customerDBTableRepository.findById(customerId);
-    }
-
-    public void saveCustomer(Customer customer) {
+    @Override
+    public void saveEntity(Customer customer) {
         boolean isNew = customer.isNewObject();
 
-        Customer updatedObject = customerDBTableRepository.createOrUpdate(customer);
+        Customer updatedObject = dBTableRepository.createOrUpdate(customer);
 
         if (isNew) {
             view.addEntity(updatedObject);
@@ -76,8 +53,9 @@ public class CustomerListLogic {
         view.showSaveNotification(customer.getName() + (isNew ? " created" : " updated"));
     }
 
-    public void deleteCustomer(Customer customer) {
-        customerDBTableRepository.remove(customer);
+    @Override
+    public void deleteEntity(Customer customer) {
+        dBTableRepository.remove(customer);
 
         view.clearSelection();
         view.removeEntity(customer);
@@ -85,7 +63,8 @@ public class CustomerListLogic {
         view.showSaveNotification(customer.getName() + " removed");
     }
 
-    public void editCustomer(Customer customer) {
+    @Override
+    public void editEntity(Customer customer) {
         if (customer == null) {
             setFragmentParameter("");
         } else {
@@ -94,13 +73,10 @@ public class CustomerListLogic {
         view.editEntity(customer);
     }
 
-    public void newCustomer() {
+    @Override
+    public void newEntity() {
         setFragmentParameter("new");
         view.clearSelection();
         view.editEntity(new Customer());
-    }
-
-    public void rowSelected(Customer customer) {
-        editCustomer(customer);
     }
 }

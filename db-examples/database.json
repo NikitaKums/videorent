@@ -3,7 +3,7 @@
     "id" : 1,
     "name" : "The Avengers",
     "stockCount" : 25,
-    "type" : 2
+    "type" : 1
   }, {
     "id" : 2,
     "name" : "Shawshank Redemption",
@@ -58,12 +58,12 @@
     "id" : 12,
     "name" : "The Intouchables",
     "stockCount" : 1,
-    "type" : 2
+    "type" : 1
   } ],
   "customer" : [ {
     "id" : 1,
     "name" : "Maria Kusk",
-    "points" : 32
+    "points" : 322
   }, {
     "id" : 2,
     "name" : "Kristian Vehmas",
@@ -71,7 +71,7 @@
   }, {
     "id" : 3,
     "name" : "Irina Tamm",
-    "points" : 455
+    "points" : 452
   }, {
     "id" : 5,
     "name" : "Mikk Saar",
@@ -103,7 +103,7 @@
       "type" : 3,
       "days" : 19,
       "paidByBonus" : false,
-      "returnedDay" : null
+      "returnedDay" : [ 2020, 3, 4 ]
     } ]
   } ]
 }

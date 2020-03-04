@@ -1,14 +1,8 @@
 package test.fujitsu.videostore.ui.inventory;
 
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.icon.VaadinIcon;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.provider.ListDataProvider;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
@@ -16,24 +10,19 @@ import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.ui.MainLayout;
-import test.fujitsu.videostore.ui.base.BaseTableDisplayImpl;
+import test.fujitsu.videostore.ui.base.BaseListViewImpl;
 import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.inventory.components.MovieForm;
 import test.fujitsu.videostore.ui.inventory.components.MovieGrid;
-import test.fujitsu.videostore.ui.order.components.OrderGrid;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = VideoStoreInventory.VIEW_NAME, layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
-public class VideoStoreInventory extends BaseTableDisplayImpl<Movie, MovieGrid> implements HasUrlParameter<String> {
+public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, MovieForm> implements HasUrlParameter<String> {
 
     public static final String VIEW_NAME = "Inventory";
-    private MovieGrid grid;
-    private MovieForm form;
-    private TextField filter;
-
     private VideoStoreInventoryLogic viewLogic = new VideoStoreInventoryLogic(this);
     private Button newMovie;
 
@@ -63,12 +52,11 @@ public class VideoStoreInventory extends BaseTableDisplayImpl<Movie, MovieGrid> 
         grid.asSingleSelect().addValueChangeListener(
                 event -> viewLogic.rowSelected(event.getValue()));
         grid.setDataProvider(dataProvider);
-        gridType = grid;
     }
 
     private void createNewMovieButton(){
         newMovie = Helper.CreateButtonWithText("New Movie");
-        newMovie.addClickListener(click -> viewLogic.newMovie());
+        newMovie.addClickListener(click -> viewLogic.newEntity());
         newEntityButton = newMovie;
     }
 
