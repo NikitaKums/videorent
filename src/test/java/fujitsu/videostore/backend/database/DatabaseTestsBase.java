@@ -1,75 +1,35 @@
 package fujitsu.videostore.backend.database;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import test.fujitsu.videostore.backend.database.DBTableRepository;
-import test.fujitsu.videostore.backend.database.DTO.RentOrderDTO;
 import test.fujitsu.videostore.backend.database.Database;
 import test.fujitsu.videostore.backend.database.DatabaseFactory;
-import test.fujitsu.videostore.backend.database.tables.rentorders.RentOrderMapper;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.backend.domain.MovieType;
 import test.fujitsu.videostore.backend.domain.RentOrder;
-import test.fujitsu.videostore.backend.helpers.DatabaseObject;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.Assert.*;
+import static org.junit.Assert.assertNull;
 
-public class DatabaseTests {
-
-    private static final String DATABASE_PATH = "src/test/resources/testsDatabase.json";
+public abstract class DatabaseTestsBase {
+    private static String databasePath;
 
     private static Database database;
     private DBTableRepository<Movie> movieTableRepository;
     private DBTableRepository<Customer> customerTableRepository;
     private DBTableRepository<RentOrder> rentOrderTableRepository;
 
-    private static List<Movie> originalMovieList;
-    private static List<Customer> originalCustomerList;
-    private static List<RentOrder> originalRentOrderList;
-
-    @BeforeClass
-    public static void setup(){
-        database = DatabaseFactory.from(DATABASE_PATH);
-        originalMovieList = database.getMovieTable().getAll();
-        originalRentOrderList = database.getOrderTable().getAll();
-        originalCustomerList = database.getCustomerTable().getAll();
-    }
+    public abstract String getDatabasePath();
 
     @Before
     public void setupRepositories(){
+        databasePath = getDatabasePath();
+        database = DatabaseFactory.from(databasePath);
         movieTableRepository = database.getMovieTable();
         customerTableRepository = database.getCustomerTable();
         rentOrderTableRepository = database.getOrderTable();
-    }
-
-    @AfterClass
-    public static void cleanup() throws IOException {
-        DatabaseObject databaseObject = new DatabaseObject();
-        RentOrderMapper rentOrderMapper = new RentOrderMapper();
-        List<RentOrderDTO> rentOrderDTOS = new ArrayList<>();
-
-        databaseObject.setMovie(originalMovieList);
-        databaseObject.setCustomer(originalCustomerList);
-
-        for (RentOrder rentOrder: originalRentOrderList) {
-            rentOrderDTOS.add(rentOrderMapper.mapFromRentOrder(rentOrder));
-        }
-        databaseObject.setOrder(rentOrderDTOS);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.findAndRegisterModules();
-        objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        objectMapper.writerWithDefaultPrettyPrinter().writeValue(new File(DATABASE_PATH), databaseObject);
     }
 
     @Test
@@ -90,7 +50,7 @@ public class DatabaseTests {
 
     @Test
     public void canFindMovieById(){
-        assertEquals("Movie 2", movieTableRepository.findById(2).getName());
+        assertEquals("Movie 1", movieTableRepository.findById(1).getName());
     }
 
     @Test
@@ -100,28 +60,34 @@ public class DatabaseTests {
 
     @Test
     public void canFindCustomerById(){
-        assertEquals("Mikk Saar", customerTableRepository.findById(5).getName());
+        assertEquals("Kristian Vehmas", customerTableRepository.findById(1).getName());
     }
 
     @Test
     public void canCreateMovie(){
         Movie newMovie = createMovieObject();
         Movie createdMovie = movieTableRepository.createOrUpdate(newMovie);
-        assertEquals(newMovie.getName(), movieTableRepository.findById(createdMovie.getId()).getName());
+        Movie fetchedMovie = movieTableRepository.findById(createdMovie.getId());
+        movieTableRepository.remove(fetchedMovie);
+        assertEquals(newMovie.getName(), fetchedMovie.getName());
     }
 
     @Test
     public void canCreateRentOrder(){
         RentOrder newRentOrder = createRentOrderObject();
         RentOrder createdRentOrder = rentOrderTableRepository.createOrUpdate(newRentOrder);
-        assertEquals(createdRentOrder.getId(), rentOrderTableRepository.findById(createdRentOrder.getId()).getId());
+        RentOrder fetchedRentOrder = rentOrderTableRepository.findById(createdRentOrder.getId());
+        rentOrderTableRepository.remove(fetchedRentOrder);
+        assertEquals(createdRentOrder.getId(), fetchedRentOrder.getId());
     }
 
     @Test
     public void canCreateCustomer(){
         Customer newCustomer = createCustomerObject();
         Customer createdCustomer = customerTableRepository.createOrUpdate(newCustomer);
-        assertEquals(newCustomer.getName(), customerTableRepository.findById(createdCustomer.getId()).getName());
+        Customer fetchedCustomer = customerTableRepository.findById(createdCustomer.getId());
+        customerTableRepository.remove(fetchedCustomer);
+        assertEquals(newCustomer.getName(), fetchedCustomer.getName());
     }
 
     @Test

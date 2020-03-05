@@ -1,0 +1,23 @@
+---
+movie:
+- id: 1
+  name: "Movie 1"
+  stockCount: 2
+  type: 3
+customer:
+- id: 1
+  name: "Kristian Vehmas"
+  points: 0
+order:
+- id: 1
+  customer: 1
+  orderDate:
+  - 2020
+  - 3
+  - 2
+  items:
+  - movie: 1
+    type: 3
+    days: 19
+    paidByBonus: false
+    returnedDay: null
