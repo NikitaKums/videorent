@@ -1,6 +1,5 @@
 package test.fujitsu.videostore.ui.order;
 
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -70,7 +69,18 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
     private void createFilterTextField(){
         filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by ID or Customer name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
-            //TODO: Implement filtering by id and customer name
+            clearFilters();
+            String value = event.getValue();
+            if (!Helper.IsStringEmptyOrWhitespace(value)) {
+                int intValue = stringToInt(value);
+                if (intValue != -1) {
+                    dataProvider.addFilter(item -> item.getId() == intValue);
+                } else {
+                    dataProvider.addFilter(item -> item.getCustomer().getName().toLowerCase().contains(value.toLowerCase()));
+                }
+            } else {
+                clearFilters();
+            }
         });
     }
 
@@ -96,5 +106,15 @@ public class OrderList extends BaseListViewImpl<RentOrder, OrderGrid, OrderForm>
     public void setParameter(BeforeEvent event,
                              @OptionalParameter String parameter) {
         viewLogic.enter(parameter);
+    }
+
+    private int stringToInt(String toConvert){
+        int result;
+        try {
+            result = Integer.parseInt(toConvert);
+        } catch (NumberFormatException e){
+            result = -1;
+        }
+        return result;
     }
 }

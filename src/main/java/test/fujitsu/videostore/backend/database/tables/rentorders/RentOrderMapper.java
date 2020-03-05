@@ -20,7 +20,6 @@ public class RentOrderMapper {
 
         RentOrder rentOrder = new RentOrder();
         rentOrder.setId(rentOrderDTO.getId());
-        System.out.println("dto -> rentorder. rentorderdto.getid:" + rentOrder.getId());
         rentOrder.setOrderDate(rentOrderDTO.getOrderDate());
 
         List<RentOrder.Item> items = new ArrayList<>();
@@ -47,7 +46,6 @@ public class RentOrderMapper {
 
         RentOrderDTO rentOrderDTO = new RentOrderDTO();
         rentOrderDTO.setId(rentOrder.getId());
-        System.out.println("rentorder -> Dto. rentorder.getid:" + rentOrder.getId());
         rentOrderDTO.setOrderDate(rentOrder.getOrderDate());
 
         List<RentOrderDTO.ItemDTO> itemsDTO = new ArrayList<>();

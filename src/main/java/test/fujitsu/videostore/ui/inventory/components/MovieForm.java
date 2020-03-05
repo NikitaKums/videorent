@@ -10,11 +10,15 @@ import com.vaadin.flow.component.textfield.TextFieldVariant;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
+import test.fujitsu.videostore.backend.database.DBTableRepository;
+import test.fujitsu.videostore.backend.database.Database;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.backend.domain.MovieType;
+import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.ui.base.BaseForm;
 import test.fujitsu.videostore.ui.base.BaseFormImpl;
 import test.fujitsu.videostore.ui.customer.Converter.StockCountConverter;
+import test.fujitsu.videostore.ui.database.CurrentDatabase;
 import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.inventory.VideoStoreInventoryLogic;
 
@@ -91,11 +95,29 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
     public void editEntity(Movie movie) {
         if (movie == null) {
             movie = new Movie();
+            delete.setEnabled(false);
+        } else {
+            delete.setEnabled(!wasMovieRented(movie.getId()));
         }
         entity = movie;
         binder.readBean(movie);
+    }
 
-        // TODO: Delete movie button should be inactive if it’s new movie creation or it was rented at least one time.
-        delete.setEnabled(true);
+    // As stated that database interfaces should not be changed, i am not going to change Database/DBTableRepository<Movie> to MovieTableRepository.
+    // Thus i am unable to define methods in MovieTableRepository interface to access them via CurrentDatabase.get().getMovieTable().
+    // Which means that i have to find if movie was already rented through getOrderTable().getAll() iteration.
+    // e.g. wasMovieRented(int id) in MovieTableRepository and access it via CurrentDatabase.get().getMovieTable().wasMovieRented(movieId);
+    private boolean wasMovieRented(int movieId){
+        DBTableRepository<RentOrder> orderTable = CurrentDatabase.get().getOrderTable();
+        for (RentOrder rentOrder: orderTable.getAll()) {
+            if (rentOrder.getItems() != null){
+                for (RentOrder.Item item: rentOrder.getItems()) {
+                    if (item.getMovie().getId() == movieId){
+                        return true; // movie was rented
+                    }
+                }
+            }
+        }
+        return false; // movie hasn't been rented
     }
 }

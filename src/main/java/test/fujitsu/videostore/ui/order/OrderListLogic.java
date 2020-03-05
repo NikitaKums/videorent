@@ -58,7 +58,6 @@ public class OrderListLogic extends BaseListLogicImpl<RentOrder, OrderList> {
 
     @Override
     public void deleteEntity(RentOrder order) {
-        System.out.println(order.getId());
         dBTableRepository.remove(order);
 
         view.clearSelection();

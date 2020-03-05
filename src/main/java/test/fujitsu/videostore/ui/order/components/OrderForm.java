@@ -11,12 +11,15 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.BinderValidationStatus;
 import com.vaadin.flow.data.binder.ValidationResult;
 import test.fujitsu.videostore.backend.domain.Customer;
+import test.fujitsu.videostore.backend.domain.MovieType;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.ui.base.BaseForm;
 import test.fujitsu.videostore.ui.base.BaseFormImpl;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
 import test.fujitsu.videostore.ui.helpers.Helper;
 import test.fujitsu.videostore.ui.order.OrderListLogic;
+
+import java.util.List;
 
 public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implements BaseForm<RentOrder> {
 
@@ -96,9 +99,25 @@ public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implement
                 Notification.show(firstError.getErrorMessage(), 5000, Notification.Position.MIDDLE);
                 return;
             }
-
-            // TODO: Validate that user have enough bonus points
             binder.writeBeanIfValid(entity);
+
+            int bonusPointsNeeded = 0;
+            List<RentOrder.Item> items = getCurrentOrderItems();
+            if (items != null){
+                for (RentOrder.Item item: items) {
+                    if (item.getMovieType() == MovieType.NEW && item.isPaidByBonus()){
+                        bonusPointsNeeded += 25 * item.getDays();
+                    }
+                }
+
+                if (bonusPointsNeeded > entity.getCustomer().getPoints()){
+                    Notification.show(
+                            "Not enough bonus points. Needed: " + bonusPointsNeeded + ". Available: " + entity.getCustomer().getPoints(),
+                            5000, Notification.Position.MIDDLE);
+                    return;
+                }
+            }
+
             new ReceiptWindow(viewLogic.getOrderToReceiptService().convertRentOrderToReceipt(entity).print(), entity.isNewObject(), () -> viewLogic.saveEntity(entity));
         });
     }
@@ -111,6 +130,7 @@ public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implement
             orderedVideos.setReadOnly(false);
             delete.setVisible(false);
             returnButton.setVisible(false);
+            delete.setEnabled(false);
         } else {
             orderedVideos.setReadOnly(true);
             delete.setVisible(true);
@@ -125,15 +145,20 @@ public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implement
         orderDate.setVisible(!isNew);
         orderDate.setReadOnly(true);
 
-        // TODO: returnButton should be not enabled if all movies were returned from this order
-        returnButton.setEnabled(true);
-
-        // TODO: Delete button should be disabled during new order creation or if order there is not all movies returned.
-        delete.setEnabled(true);
+        List<RentOrder.Item> items = getCurrentOrderItems();
+        if (items != null){
+            boolean movieNotReturned = items.stream().anyMatch(item -> item.getReturnedDay() == null);
+            returnButton.setEnabled(movieNotReturned);
+            delete.setEnabled(!movieNotReturned);
+        }
     }
 
     private void setSaveButtonCaption(boolean isReadOnly) {
         save.setText(isReadOnly ? "View receipt" : "Review and Print receipt");
+    }
+
+    private List<RentOrder.Item> getCurrentOrderItems(){
+        return entity.getItems();
     }
 
     public RentOrder getCurrentOrder() {

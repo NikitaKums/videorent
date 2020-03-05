@@ -2,15 +2,15 @@
 movie:
 - id: 1
   name: "The Avengers"
-  stockCount: 25
+  stockCount: 0
   type: 2
 - id: 2
   name: "Shawshank Redemption"
-  stockCount: 2
+  stockCount: 80
   type: 3
 - id: 3
   name: "Aquaman"
-  stockCount: 37
+  stockCount: 9
   type: 1
 - id: 50
   name: "Spider-Man: Into the Spider-Verse"
@@ -18,7 +18,7 @@ movie:
   type: 1
 - id: 214
   name: "The Upside"
-  stockCount: 5
+  stockCount: 0
   type: 1
 - id: 25
   name: "The Kid Who Would Be King"
@@ -48,6 +48,10 @@ movie:
   name: "The Intouchables"
   stockCount: 1
   type: 2
+- id: 215
+  name: "test"
+  stockCount: 0
+  type: 1
 customer:
 - id: 1
   name: "Maria Kusk"
@@ -89,5 +93,126 @@ order:
   - movie: 1
     type: 2
     days: 7
+    paidByBonus: false
+    returnedDay:
+    - 2020
+    - 3
+    - 5
+- id: 4
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 1
+    paidByBonus: false
+    returnedDay:
+    - 2020
+    - 3
+    - 5
+- id: 5
+  customer: 3
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 5
+    paidByBonus: false
+    returnedDay: null
+- id: 6
+  customer: 3
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 5
+    paidByBonus: true
+    returnedDay: null
+- id: 7
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 5
+    paidByBonus: true
+    returnedDay:
+    - 2020
+    - 3
+    - 5
+- id: 8
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 5
+    paidByBonus: false
+    returnedDay:
+    - 2020
+    - 3
+    - 5
+- id: 9
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 25
+    type: 2
+    days: 5
+    paidByBonus: false
+    returnedDay: null
+  - movie: 3
+    type: 1
+    days: 5
+    paidByBonus: false
+    returnedDay: null
+- id: 10
+  customer: 3
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 3
+    type: 1
+    days: 1
+    paidByBonus: true
+    returnedDay:
+    - 2020
+    - 3
+    - 5
+- id: 11
+  customer: 1
+  orderDate:
+  - 2020
+  - 3
+  - 5
+  items:
+  - movie: 2
+    type: 3
+    days: 1
+    paidByBonus: false
+    returnedDay: null
+  - movie: 3
+    type: 1
+    days: 2
     paidByBonus: false
     returnedDay: null

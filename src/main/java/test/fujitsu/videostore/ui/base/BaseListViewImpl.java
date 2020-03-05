@@ -50,4 +50,8 @@ public abstract class BaseListViewImpl<DomainType, GridType extends Grid<DomainT
         dataProvider.refreshAll();
     }
 
+    protected void clearFilters(){
+        dataProvider.clearFilters();
+    }
+
 }

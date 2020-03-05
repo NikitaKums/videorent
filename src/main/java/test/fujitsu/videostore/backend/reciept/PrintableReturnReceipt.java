@@ -4,6 +4,8 @@ import test.fujitsu.videostore.backend.domain.MovieType;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -71,11 +73,9 @@ public class PrintableReturnReceipt implements PrintableReceipt {
         StringBuilder receipt = new StringBuilder()
                 .append("ID: ").append(getOrderId()).append(" (Return)")
                 .append("\n")
-                // TODO: Format rent date in dd-MM-YY format
-                .append("Rent date: ").append(getRentDate().toString())
+                .append("Rent date: ").append(formatDate(getRentDate()))
                 .append("\n").append("Customer: ").append(getCustomerName())
-                // TODO: Format return date in dd-MM-YY format
-                .append("\nReturn date: ").append(getReturnDate().toString())
+                .append("\nReturn date: ").append(formatDate(getReturnDate()))
                 .append("\n");
 
         returnedItems.forEach(item -> receipt.append(item.print()));
@@ -84,6 +84,12 @@ public class PrintableReturnReceipt implements PrintableReceipt {
         receipt.append("Total late change: ").append(getTotalCharge()).append(" EUR");
 
         return receipt.toString();
+    }
+
+    // Notice! In code the date format pattern was said to be "dd-MM-YY" whereas word document's pattern "dd.MM.YYYY".
+    // Using word document date pattern.
+    private String formatDate(LocalDate date){
+        return DateTimeFormatter.ofPattern("dd.MM.YYYY").format(date);
     }
 
     public static class Item implements PrintableReceipt {

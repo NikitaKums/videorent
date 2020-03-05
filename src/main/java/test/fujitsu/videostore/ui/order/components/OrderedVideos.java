@@ -20,6 +20,7 @@ import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.backend.domain.MovieType;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.ui.database.CurrentDatabase;
+import test.fujitsu.videostore.ui.helpers.Helper;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -44,33 +45,24 @@ public class OrderedVideos extends VerticalLayout implements HasValue<AbstractFi
 
         cleanForm();
 
-        movieComboBox = new ComboBox<>("Movie to order");
-        movieComboBox.setId("movie-to-order");
-        movieComboBox.setWidth("100%");
-        movieComboBox.setRequired(true);
+        movieComboBox = Helper.CreateComboBox("movie-to-order", "Movie to order", "100%", true);
         movieComboBox.setItemLabelGenerator(Movie::getName);
-        // TODO: List only available movies
-        movieComboBox.setItems(CurrentDatabase.get().getMovieTable().getAll());
+        movieComboBox.setItems(CurrentDatabase.get().getMovieTable().getAll().stream().filter(item -> item.getStockCount() > 0));
         addFormBinder.forField(movieComboBox)
                 .asRequired()
                 .bind("movie");
         add(movieComboBox);
 
-        numberOfDays = new TextField("Number of days");
-        numberOfDays.setId("number-of-days");
-        numberOfDays.setWidth("100%");
-        numberOfDays.setRequired(true);
+        numberOfDays = Helper.CreateTextField("number-of-days", "Number of days", "100%", true, null);
         addFormBinder.forField(numberOfDays)
                 .asRequired()
                 .withConverter(new StringToIntegerConverter("Invalid number of days"))
-                // TODO: Validation here. Number of days should be more than zero.
+                .withValidator(dayCount -> dayCount > 0, "Number of days should be more than zero")
                 .bind("days");
 
         add(numberOfDays);
 
-        addButton = new Button("Add to order");
-        addButton.setId("add-to-order-button");
-        addButton.setWidth("100%");
+        addButton = Helper.CreateButtonWithTextAndWidth("add-to-order-button", "Add to order", "100%");
         addButton.addClickListener(event -> {
             if (!addFormBinder.validate().isOk()) {
                 return;

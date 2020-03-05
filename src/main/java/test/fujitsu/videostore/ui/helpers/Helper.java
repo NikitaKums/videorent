@@ -115,4 +115,8 @@ public class Helper {
     public static VerticalLayout CreateVerticalLayout(){
         return new VerticalLayout();
     }
+
+    public static boolean IsStringEmptyOrWhitespace(String value) {
+        return value.isEmpty() || value.trim().length() == 0;
+    }
 }

@@ -27,7 +27,6 @@ public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, Movi
 
     public static final String VIEW_NAME = "Inventory";
     private VideoStoreInventoryLogic viewLogic = new VideoStoreInventoryLogic(this);
-    private Button newMovie;
 
     public VideoStoreInventory() {
         super(new ListDataProvider<>(new ArrayList<>()));
@@ -67,7 +66,13 @@ public class VideoStoreInventory extends BaseListViewImpl<Movie, MovieGrid, Movi
     private void createFilterTextField(){
         filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
-            // TODO: Implement filtering by movie name
+            clearFilters();
+            String value = event.getValue();
+            if (!Helper.IsStringEmptyOrWhitespace(value)) {
+                dataProvider.addFilter(item -> item.getName().toLowerCase().contains(value.toLowerCase()));
+            } else {
+                clearFilters();
+            }
         });
     }
 

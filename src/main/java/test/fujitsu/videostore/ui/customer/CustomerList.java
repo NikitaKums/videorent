@@ -65,7 +65,13 @@ public class CustomerList extends BaseListViewImpl<Customer, CustomerGrid, Custo
     private void createFilterTextField(){
         filter = Helper.CreateTextFieldWithPlaceholder("filter", "Filter by customer name", ValueChangeMode.EAGER);
         filter.addValueChangeListener(event -> {
-            // TODO: Implement filtering by customer name
+            clearFilters();
+            String value = event.getValue();
+            if (!Helper.IsStringEmptyOrWhitespace(value)) {
+                dataProvider.addFilter(item -> item.getName().toLowerCase().contains(value.toLowerCase()));
+            } else {
+                clearFilters();
+            }
         });
     }
 
