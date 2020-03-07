@@ -30,6 +30,7 @@ public class MovieParser extends BaseParser implements Parser<Movie> {
 
     @Override
     public void saveAll(List<Movie> data) {
+        getAll();
         databaseObject.setMovie(data);
         try {
             objectMapper.writeValue(new File(filePath), databaseObject);

@@ -87,7 +87,7 @@ public class ReturnMovieWindow extends Dialog {
     }
 
     private void updatePrintedReceipt() {
-        printedReceipt.setText(orderToReceiptService.convertRentOrderToReceipt(returnOrder).print());
+        printedReceipt.setText(orderToReceiptService.convertReturnOrderToReceipt(returnOrder).print());
     }
 
     private HorizontalLayout getButtonLayout() {

@@ -55,7 +55,7 @@ movie:
 customer:
 - id: 1
   name: "Maria Kusk"
-  points: 32
+  points: 322
 - id: 2
   name: "Kristian Vehmas"
   points: 0
@@ -65,6 +65,12 @@ customer:
 - id: 5
   name: "Mikk Saar"
   points: 25
+- id: 6
+  name: "test"
+  points: 0
+- id: 7
+  name: "test"
+  points: 0
 order:
 - id: 1
   customer: 2
@@ -214,5 +220,65 @@ order:
   - movie: 3
     type: 1
     days: 2
+    paidByBonus: false
+    returnedDay: null
+- id: 12
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 6
+  items:
+  - movie: 2
+    type: 3
+    days: 5
+    paidByBonus: false
+    returnedDay: null
+- id: 13
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 6
+  items:
+  - movie: 2
+    type: 3
+    days: 6
+    paidByBonus: false
+    returnedDay: null
+- id: 14
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 6
+  items:
+  - movie: 2
+    type: 3
+    days: 6
+    paidByBonus: false
+    returnedDay: null
+- id: 15
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 6
+  items:
+  - movie: 2
+    type: 3
+    days: 5
+    paidByBonus: false
+    returnedDay: null
+- id: 16
+  customer: 2
+  orderDate:
+  - 2020
+  - 3
+  - 6
+  items:
+  - movie: 2
+    type: 3
+    days: 5
     paidByBonus: false
     returnedDay: null

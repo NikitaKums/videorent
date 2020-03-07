@@ -4,11 +4,21 @@
     "name" : "Movie 1",
     "stockCount" : 2,
     "type" : 3
+  }, {
+    "id" : 2,
+    "name" : "Movie 2",
+    "stockCount" : 2,
+    "type" : 1
+  }, {
+    "id" : 3,
+    "name" : "Movie 3",
+    "stockCount" : 2,
+    "type" : 2
   } ],
   "customer" : [ {
     "id" : 1,
     "name" : "Kristian Vehmas",
-    "points" : 0
+    "points" : 25
   } ],
   "order" : [ {
     "id" : 1,

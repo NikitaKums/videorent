@@ -1,16 +1,8 @@
 package test.fujitsu.videostore.backend.database;
 
-import test.fujitsu.videostore.backend.database.tables.customers.CustomerTableRepositoryImpl;
-import test.fujitsu.videostore.backend.database.tables.movies.MovieTableRepository;
-import test.fujitsu.videostore.backend.database.tables.movies.MovieTableRepositoryImpl;
-import test.fujitsu.videostore.backend.database.tables.rentorders.RentOrderRepositoryImpl;
 import test.fujitsu.videostore.backend.domain.Customer;
 import test.fujitsu.videostore.backend.domain.Movie;
-import test.fujitsu.videostore.backend.domain.MovieType;
 import test.fujitsu.videostore.backend.domain.RentOrder;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Database Factory.
@@ -35,17 +27,17 @@ public class DatabaseFactory {
         return new Database() {
             @Override
             public DBTableRepository<Movie> getMovieTable() {
-                return new MovieTableRepositoryImpl(filePath);
+                return RepositoryInstance.GetMovieDBTableRepository(filePath);
             }
 
             @Override
             public DBTableRepository<Customer> getCustomerTable() {
-                return new CustomerTableRepositoryImpl(filePath);
+                return RepositoryInstance.GetCustomerDBTableRepository(filePath);
             }
 
             @Override
             public DBTableRepository<RentOrder> getOrderTable() {
-                return new RentOrderRepositoryImpl(filePath);
+                return RepositoryInstance.GetRentOrderDBTableRepository(filePath);
             }
         };
     }

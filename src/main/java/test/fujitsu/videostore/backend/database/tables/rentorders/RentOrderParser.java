@@ -48,7 +48,7 @@ public class RentOrderParser extends BaseParser implements Parser<RentOrder> {
         for (RentOrder rentOrder : data) {
             rentOrderDTOs.add(rentOrderMapper.mapFromRentOrder(rentOrder));
         }
-
+        getAll();
         databaseObject.setOrder(rentOrderDTOs);
         try {
             objectMapper.writeValue(new File(filePath), databaseObject);

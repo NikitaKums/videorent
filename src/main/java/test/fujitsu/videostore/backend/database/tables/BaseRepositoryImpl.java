@@ -4,7 +4,7 @@ import test.fujitsu.videostore.backend.helpers.Parser;
 
 import java.util.List;
 
-public class BaseRepositoryImpl<T> implements BaseRepository<T> {
+public abstract class BaseRepositoryImpl<T> implements BaseRepository<T> {
 
     protected List<T> list;
     private Parser<T> parser;

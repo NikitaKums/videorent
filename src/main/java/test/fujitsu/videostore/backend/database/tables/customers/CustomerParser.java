@@ -31,6 +31,7 @@ public class CustomerParser extends BaseParser implements Parser<Customer> {
 
     @Override
     public void saveAll(List<Customer> data) {
+        getAll();
         databaseObject.setCustomer(data);
         try {
             objectMapper.writeValue(new File(filePath), databaseObject);
