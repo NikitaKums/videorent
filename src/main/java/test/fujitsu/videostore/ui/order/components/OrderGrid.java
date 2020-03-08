@@ -5,6 +5,9 @@ import com.vaadin.flow.data.renderer.LocalDateRenderer;
 import com.vaadin.flow.data.renderer.TemplateRenderer;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 public class OrderGrid extends Grid<RentOrder> {
 
     public OrderGrid() {
@@ -27,15 +30,45 @@ public class OrderGrid extends Grid<RentOrder> {
                 .setId("order-date");
         final String availabilityTemplate = "<iron-icon icon=\"vaadin:circle\" class-name=\"[[item.statusClass]]\"></iron-icon>";
         addColumn(TemplateRenderer.<RentOrder>of(availabilityTemplate)
-                .withProperty("statusClass", order -> {
-                    // TODO: Implement flagging system using rules below:
-                    // Return "Ok" if there is no any overdue, if all movies are returned
-                    // Return "Horrible" if all movies were not returned in time
-                    // Return "SoSo" if ablest one movie was not returned in time
-                    return "Ok";
-                }))
+                .withProperty("statusClass", this::getMovieReturnedFlag))
                 .setHeader("Status")
                 .setFlexGrow(3)
                 .setId("availability");
+    }
+
+    private String getMovieReturnedFlag(RentOrder order){
+        if (order.getItems() == null){
+            return ""; // just caution check
+        }
+
+        int totalMovies = order.getItems().size();
+        int lateMovies = 0;
+        int onTimeMovies = 0;
+
+        for (RentOrder.Item item : order.getItems()){
+            int lateDays = getLateDays(order.getOrderDate(), LocalDate.now(), item.getDays());
+            if (lateDays == 0){
+                onTimeMovies += 1;
+            } else {
+                lateMovies += 1;
+            }
+        }
+
+        if (totalMovies == onTimeMovies){
+            // all returned
+            return "Ok";
+        }
+        else if (totalMovies == lateMovies){
+            // all late
+            return "Horrible";
+        }
+        // some late, some on time
+        return "SoSo";
+    }
+
+    private int getLateDays(LocalDate orderedAt, LocalDate returnedAt, int rentDays){
+        int actualRentDays = (int) orderedAt.until(returnedAt, ChronoUnit.DAYS);
+        int daysOverdue = actualRentDays - rentDays;
+        return Math.max(daysOverdue, 0);
     }
 }

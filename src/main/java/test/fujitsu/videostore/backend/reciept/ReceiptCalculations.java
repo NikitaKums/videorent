@@ -96,7 +96,8 @@ public class ReceiptCalculations {
 
     private int getLateDays(LocalDate orderedAt, LocalDate returnedAt, int rentDays){
         int actualRentDays = (int) orderedAt.until(returnedAt, ChronoUnit.DAYS);
-        return actualRentDays > 0 ? actualRentDays - rentDays : 0;
+        int daysOverdue = actualRentDays - rentDays;
+        return Math.max(daysOverdue, 0);
     }
 
     private Movie updateMovieStock(Movie movie, int newStock){

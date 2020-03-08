@@ -96,7 +96,7 @@ public class OrderForm extends BaseFormImpl<RentOrder, OrderListLogic> implement
             BinderValidationStatus<RentOrder> validationStatus = binder.validate();
             if (validationStatus.hasErrors()) {
                 ValidationResult firstError = validationStatus.getValidationErrors().iterator().next();
-                Notification.show(firstError.getErrorMessage(), 5000, Notification.Position.MIDDLE);
+                Notification.show(firstError.getErrorMessage(), 2000, Notification.Position.BOTTOM_START);
                 return;
             }
             binder.writeBeanIfValid(entity);

@@ -79,7 +79,7 @@ public class DatabaseSelectionView extends FlexLayout {
     }
 
     private void displayNotification(String message){
-        Notification databaseFilePathNotification = new Notification(message, 2000, Notification.Position.TOP_START);
+        Notification databaseFilePathNotification = new Notification(message, 2000);
         databaseFilePathNotification.open();
     }
 }

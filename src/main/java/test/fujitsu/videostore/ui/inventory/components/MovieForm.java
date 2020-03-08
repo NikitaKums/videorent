@@ -4,6 +4,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.component.textfield.TextFieldVariant;
@@ -74,7 +75,9 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
                 .bind("name");
         tempBinder.forField(type)
                 .bind("type");
-        tempBinder.forField(stockCount).withConverter(new StockCountConverter())
+        tempBinder.forField(stockCount)
+                .withValidator(item -> item != null && !item.trim().isEmpty() && !item.contains(","), "Invalid movie stock count")
+                .withConverter(new StockCountConverter())
                 .bind("stockCount");
         Helper.AddBinderStatusChangeListener(tempBinder, save);
 
@@ -84,8 +87,23 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
     private void addListenerToSaveButton(){
         save.addClickListener(event -> {
             if (entity != null) {
-                // TODO: Validation for movie name, validate that movie type is selected
                 binder.writeBeanIfValid(entity);
+                if (entity.getName() == null || entity.getName().trim().isEmpty()){
+                    Notification.show("Please fill movie name field.");
+                    return;
+                }
+                if (entity.getStockCount() < 0 ) {
+                    Notification.show("Please enter positive stock count");
+                    return;
+                }
+                if (entity.getType() == null){
+                    Notification.show("Please select movie type");
+                    return;
+                }
+                if (entity.getId() == -1 && doesMovieWithNameExist(entity.getName())){
+                    Notification.show("Movie with given name already exists");
+                    return;
+                }
                 viewLogic.saveEntity(entity);
             }
         });
@@ -95,8 +113,11 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
     public void editEntity(Movie movie) {
         if (movie == null) {
             movie = new Movie();
+        }
+        if (movie.getId() == -1){
             delete.setEnabled(false);
-        } else {
+        }
+        else {
             delete.setEnabled(!wasMovieRented(movie.getId()));
         }
         entity = movie;
@@ -119,5 +140,9 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
             }
         }
         return false; // movie hasn't been rented
+    }
+
+    private boolean doesMovieWithNameExist(String movieName){
+        return CurrentDatabase.get().getMovieTable().getAll().stream().anyMatch(movie -> movie.getName().equals(movieName));
     }
 }

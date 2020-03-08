@@ -3,6 +3,7 @@ package test.fujitsu.videostore.ui.customer.components;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -60,6 +61,7 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
         tempBinder.forField(name)
                 .bind("name");
         tempBinder.forField(points)
+                .withValidator(item -> item != null && !item.trim().isEmpty() && !item.contains(","), "Invalid bonus points format")
                 .withConverter(new StringToIntegerConverter("Invalid bonus points format"))
                 .bind("points");
         Helper.AddBinderStatusChangeListener(tempBinder, save);
@@ -70,10 +72,21 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
     private void addListenerToSaveButton(){
         save.addClickListener(event -> {
             if (entity != null) {
-                // TODO: Perform validations here. Need to validate that customer name is filled, bonus points have correct integer representation.
-                // TODO: Validation that customer with same name is not present already in database.
-
                 binder.writeBeanIfValid(entity);
+
+                if (entity.getName() == null || entity.getName().trim().isEmpty()){
+                    Notification.show("Please fill customer name field.");
+                    return;
+                }
+                if (entity.getPoints() < 0 ) {
+                    Notification.show("Please enter positive points amount");
+                    return;
+                }
+                if (entity.getId() == -1 && doesCustomerNameExists(entity.getName())){
+                    Notification.show("Customer with given name already exists");
+                    return;
+                }
+
                 viewLogic.saveEntity(entity);
             }
         });
@@ -83,14 +96,15 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
     public void editEntity(Customer customer) {
         if (customer == null) {
             customer = new Customer();
+        }
+        if (customer.getId() == -1){
             delete.setEnabled(false);
-        } else {
+        }
+        else {
             delete.setEnabled(!doesCustomerHaveActiveRent(customer.getId()));
         }
         entity = customer;
         binder.readBean(customer);
-
-        // TODO: Customer deletion button should be inactive if it’s new customer creation or customer have active rent’s. If customer deleted, then all his already inactive rent’s should be deleted also.
     }
 
     // As stated that database interfaces should not be changed, i am not going to change Database/DBTableRepository<Customer> to CustomerTableRepository.
@@ -114,5 +128,9 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
             }
         }
         return false; // no active rents
+    }
+
+    private boolean doesCustomerNameExists(String customerName){
+        return CurrentDatabase.get().getCustomerTable().getAll().stream().anyMatch(item -> item.getName().equals(customerName));
     }
 }

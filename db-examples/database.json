@@ -2,7 +2,7 @@
   "movie" : [ {
     "id" : 1,
     "name" : "The Avengers",
-    "stockCount" : 25,
+    "stockCount" : 28,
     "type" : 1
   }, {
     "id" : 2,
@@ -12,7 +12,7 @@
   }, {
     "id" : 3,
     "name" : "Aquaman",
-    "stockCount" : 37,
+    "stockCount" : 36,
     "type" : 1
   }, {
     "id" : 50,
@@ -27,7 +27,7 @@
   }, {
     "id" : 25,
     "name" : "The Kid Who Would Be King",
-    "stockCount" : 3,
+    "stockCount" : 4,
     "type" : 1
   }, {
     "id" : 26,
@@ -62,7 +62,32 @@
   }, {
     "id" : 215,
     "name" : "testmoviee",
-    "stockCount" : 1,
+    "stockCount" : 4,
+    "type" : 1
+  }, {
+    "id" : 216,
+    "name" : "test",
+    "stockCount" : 0,
+    "type" : 1
+  }, {
+    "id" : 217,
+    "name" : "test",
+    "stockCount" : 0,
+    "type" : 1
+  }, {
+    "id" : 218,
+    "name" : "test1",
+    "stockCount" : 3,
+    "type" : 1
+  }, {
+    "id" : 219,
+    "name" : "testt",
+    "stockCount" : 0,
+    "type" : 1
+  }, {
+    "id" : 220,
+    "name" : "aquaman",
+    "stockCount" : 4,
     "type" : 1
   } ],
   "customer" : [ {
@@ -83,8 +108,8 @@
     "points" : 25
   }, {
     "id" : 6,
-    "name" : "testcustomer",
-    "points" : 752
+    "name" : "testt",
+    "points" : 3
   } ],
   "order" : [ {
     "id" : 1,
@@ -266,7 +291,7 @@
       "type" : 1,
       "days" : 5,
       "paidByBonus" : false,
-      "returnedDay" : null
+      "returnedDay" : [ 2020, 3, 8 ]
     } ]
   }, {
     "id" : 17,
@@ -291,17 +316,6 @@
       "returnedDay" : null
     } ]
   }, {
-    "id" : 19,
-    "customer" : 2,
-    "orderDate" : [ 2020, 3, 6 ],
-    "items" : [ {
-      "movie" : 1,
-      "type" : 1,
-      "days" : 1,
-      "paidByBonus" : false,
-      "returnedDay" : [ 2020, 3, 7 ]
-    } ]
-  }, {
     "id" : 20,
     "customer" : 2,
     "orderDate" : [ 2020, 2, 20 ],
@@ -310,89 +324,6 @@
       "type" : 3,
       "days" : 9,
       "paidByBonus" : false,
-      "returnedDay" : [ 2020, 3, 7 ]
-    } ]
-  }, {
-    "id" : 21,
-    "customer" : 2,
-    "orderDate" : [ 2020, 3, 6 ],
-    "items" : [ {
-      "movie" : 1,
-      "type" : 1,
-      "days" : 1,
-      "paidByBonus" : false,
-      "returnedDay" : null
-    } ]
-  }, {
-    "id" : 22,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 7 ],
-    "items" : [ {
-      "movie" : 1,
-      "type" : 1,
-      "days" : 5,
-      "paidByBonus" : false,
-      "returnedDay" : null
-    } ]
-  }, {
-    "id" : 23,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 7 ],
-    "items" : [ {
-      "movie" : 215,
-      "type" : 1,
-      "days" : 5,
-      "paidByBonus" : false,
-      "returnedDay" : null
-    }, {
-      "movie" : 25,
-      "type" : 1,
-      "days" : 3,
-      "paidByBonus" : false,
-      "returnedDay" : null
-    } ]
-  }, {
-    "id" : 24,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 7 ],
-    "items" : [ {
-      "movie" : 2,
-      "type" : 3,
-      "days" : 9,
-      "paidByBonus" : false,
-      "returnedDay" : [ 2020, 3, 7 ]
-    } ]
-  }, {
-    "id" : 25,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 5 ],
-    "items" : [ {
-      "movie" : 215,
-      "type" : 1,
-      "days" : 1,
-      "paidByBonus" : true,
-      "returnedDay" : [ 2020, 3, 7 ]
-    } ]
-  }, {
-    "id" : 26,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 7 ],
-    "items" : [ {
-      "movie" : 215,
-      "type" : 1,
-      "days" : 3,
-      "paidByBonus" : false,
-      "returnedDay" : null
-    } ]
-  }, {
-    "id" : 27,
-    "customer" : 6,
-    "orderDate" : [ 2020, 3, 7 ],
-    "items" : [ {
-      "movie" : 215,
-      "type" : 1,
-      "days" : 10,
-      "paidByBonus" : true,
       "returnedDay" : [ 2020, 3, 7 ]
     } ]
   } ]
