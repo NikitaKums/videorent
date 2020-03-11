@@ -13,6 +13,7 @@ import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import test.fujitsu.videostore.backend.database.DBTableRepository;
 import test.fujitsu.videostore.backend.database.Database;
+import test.fujitsu.videostore.backend.database.RepositoryInstance;
 import test.fujitsu.videostore.backend.domain.Movie;
 import test.fujitsu.videostore.backend.domain.MovieType;
 import test.fujitsu.videostore.backend.domain.RentOrder;
@@ -100,7 +101,7 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
                     Notification.show("Please select movie type");
                     return;
                 }
-                if (entity.getId() == -1 && doesMovieWithNameExist(entity.getName())){
+                if (doesMovieWithNameExist(entity.getId(), entity.getName())){
                     Notification.show("Movie with given name already exists");
                     return;
                 }
@@ -142,7 +143,7 @@ public class MovieForm extends BaseFormImpl<Movie, VideoStoreInventoryLogic> imp
         return false; // movie hasn't been rented
     }
 
-    private boolean doesMovieWithNameExist(String movieName){
-        return CurrentDatabase.get().getMovieTable().getAll().stream().anyMatch(movie -> movie.getName().equals(movieName));
+    private boolean doesMovieWithNameExist(int id, String movieName){
+        return CurrentDatabase.get().getMovieTable().getAll().stream().anyMatch(movie -> movie.getName().equals(movieName) && movie.getId() != id);
     }
 }

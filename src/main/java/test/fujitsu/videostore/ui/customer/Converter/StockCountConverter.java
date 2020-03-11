@@ -9,7 +9,7 @@ import java.util.Locale;
 public class StockCountConverter extends StringToIntegerConverter {
 
     public StockCountConverter() {
-        super(0, "Could not convert value to " + Integer.class.getName() + ".");
+        super(0, "Please enter valid value");
     }
 
     @Override

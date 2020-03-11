@@ -1,17 +1,17 @@
 package test.fujitsu.videostore.backend.database.tables.rentorders;
 
 import test.fujitsu.videostore.backend.database.DTO.RentOrderDTO;
-import test.fujitsu.videostore.backend.database.tables.BaseParser;
+import test.fujitsu.videostore.backend.database.tables.BaseParserImpl;
 import test.fujitsu.videostore.backend.domain.RentOrder;
 import test.fujitsu.videostore.backend.helpers.DatabaseObject;
-import test.fujitsu.videostore.backend.helpers.Parser;
+import test.fujitsu.videostore.backend.database.tables.BaseParser;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentOrderParser extends BaseParser implements Parser<RentOrder> {
+public class RentOrderParser extends BaseParserImpl<RentOrder> {
 
     private DatabaseObject databaseObject;
     private RentOrderMapper rentOrderMapper;

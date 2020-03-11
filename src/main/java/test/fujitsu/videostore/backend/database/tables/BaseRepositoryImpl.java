@@ -1,17 +1,15 @@
 package test.fujitsu.videostore.backend.database.tables;
 
-import test.fujitsu.videostore.backend.helpers.Parser;
-
 import java.util.List;
 
 public abstract class BaseRepositoryImpl<T> implements BaseRepository<T> {
 
     protected List<T> list;
-    private Parser<T> parser;
+    private BaseParser<T> baseParser;
 
-    public BaseRepositoryImpl(Parser<T> parser){
-        this.parser = parser;
-        this.list = this.parser.getAll();
+    public BaseRepositoryImpl(BaseParser<T> baseParser){
+        this.baseParser = baseParser;
+        this.list = this.baseParser.getAll();
     }
 
     @Override
@@ -28,6 +26,6 @@ public abstract class BaseRepositoryImpl<T> implements BaseRepository<T> {
 
     @Override
     public void saveChanges() {
-        parser.saveAll(list);
+        baseParser.saveAll(list);
     }
 }

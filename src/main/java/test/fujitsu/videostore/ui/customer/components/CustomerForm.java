@@ -82,7 +82,7 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
                     Notification.show("Please enter positive points amount");
                     return;
                 }
-                if (entity.getId() == -1 && doesCustomerNameExists(entity.getName())){
+                if (doesCustomerNameExists(entity.getId(), entity.getName())){
                     Notification.show("Customer with given name already exists");
                     return;
                 }
@@ -130,7 +130,7 @@ public class CustomerForm extends BaseFormImpl<Customer, CustomerListLogic> impl
         return false; // no active rents
     }
 
-    private boolean doesCustomerNameExists(String customerName){
-        return CurrentDatabase.get().getCustomerTable().getAll().stream().anyMatch(item -> item.getName().equals(customerName));
+    private boolean doesCustomerNameExists(int id, String customerName){
+        return CurrentDatabase.get().getCustomerTable().getAll().stream().anyMatch(item -> item.getName().equals(customerName) && item.getId() != id);
     }
 }

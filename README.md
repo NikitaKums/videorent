@@ -1,3 +1,4 @@
+# Using lombok, requires annotation processing to be enabled.
 # Running
 
 For running project latest JDK 1.8 or newer and maven is required.
