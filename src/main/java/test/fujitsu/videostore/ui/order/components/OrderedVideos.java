@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -73,10 +74,15 @@ public class OrderedVideos extends VerticalLayout implements HasValue<AbstractFi
             itemToAdd.setMovieType(addFormBinder.getBean().getMovie().getType());
             itemToAdd.setDays(addFormBinder.getBean().getDays());
 
-            movieToOrder.add(itemToAdd);
-            setValue(movieToOrder);
+            if (movieToOrder.stream().anyMatch(item -> item.getMovie().getId() == itemToAdd.getMovie().getId())){
+                Notification.show("You have already added this movie to your order.");
+            } else {
+                movieToOrder.add(itemToAdd);
+                setValue(movieToOrder);
 
-            cleanForm();
+                cleanForm();
+            }
+
         });
 
         add(addButton);
